@@ -9,4 +9,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface GameRoomService extends RemoteService {
     RoomResponse getRooms();
     String createRoom(String name);
+    void deleteRoom(String roomId);
 }

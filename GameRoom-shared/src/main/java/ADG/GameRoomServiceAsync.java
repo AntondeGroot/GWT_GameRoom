@@ -8,4 +8,7 @@ public interface GameRoomServiceAsync {
 
     void createRoom(String name, AsyncCallback<String> asyncCallback)
             throws IllegalArgumentException;
+
+    void deleteRoom(String name, AsyncCallback<Void> asyncCallback)
+        throws IllegalArgumentException;
 }
