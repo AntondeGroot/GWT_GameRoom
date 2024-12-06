@@ -30,4 +30,13 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
         rooms.add(name);
         return name;
     }
+
+    @Override
+    public void deleteRoom(String roomName) {
+        if (rooms.contains(roomName)){
+            rooms.remove(roomName);
+        }
+    }
+
+
 }
