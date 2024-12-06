@@ -42,20 +42,23 @@ public class GameLobby implements EntryPoint {
         mainPanel.add(roomListPanel);
 
         // Create room button click handler
-//        createRoomButton.addClickHandler(new ClickHandler() {
-//            @Override
-//            public void onClick(ClickEvent event) {
-//
-//                String roomName = roomNameInput.getText().trim();
-//                if (!roomName.isEmpty() && !roomsInfo.contains(roomName)) {
-//                    gameRooms.add(roomName);
-//                    updateRoomList();
-//                    navigateToRoom(roomName);
-//                } else {
-//                    Window.alert("Room name cannot be empty or duplicate!");
-//                }
-//            }
-//        });
+        createRoomButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                String roomName = roomNameInput.getText().trim();
+                gameRoomService.createRoom(roomName, new AsyncCallback<String>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Window.alert("Room name can not be empty or a duplicate");
+                    }
+
+                    @Override
+                    public void onSuccess(String s) {
+                        navigateToRoom(roomName);
+                    }
+                });
+            }
+        });
 
         Timer timer = new Timer() {
             @Override
@@ -96,9 +99,7 @@ public class GameLobby implements EntryPoint {
 
         gameRoomService.getRooms(new AsyncCallback<RoomResponse>(){
             @Override
-            public void onFailure(Throwable throwable) {
-
-            }
+            public void onFailure(Throwable throwable) {}
 
             @Override
             public void onSuccess(RoomResponse roomResponse) {

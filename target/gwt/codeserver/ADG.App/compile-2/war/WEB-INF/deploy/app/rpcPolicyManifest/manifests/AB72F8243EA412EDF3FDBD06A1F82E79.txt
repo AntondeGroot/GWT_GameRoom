@@ -1,2 +1,0 @@
-serviceClass: ADG.GreetingService
-path: 778273D3DEEEE419731FA749B8C72F89.gwt.rpc
