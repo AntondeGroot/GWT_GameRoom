@@ -9,12 +9,15 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
+import java.util.ArrayList;
+
 public class GameLobby implements EntryPoint {
 
     private VerticalPanel mainPanel = new VerticalPanel();
     private VerticalPanel roomListPanel = new VerticalPanel();
     private TextBox roomNameInput = new TextBox();
     private Button createRoomButton = new Button("Create Room");
+    private ArrayList<String> roomNames = new ArrayList<>();
 
 
     /**
@@ -71,21 +74,23 @@ public class GameLobby implements EntryPoint {
     }
 
     private void updateRoomList(RoomResponse roomResponse) {
-        roomListPanel.clear();
-        for (String roomName : roomResponse.getRoomNames()) {
-            Button joinButton = new Button("Join");
-            HorizontalPanel roomPanel = new HorizontalPanel();
-            roomPanel.add(new Label(roomName));
-            roomPanel.add(joinButton);
-            roomListPanel.add(roomPanel);
+        if(!roomNames.equals(roomResponse.getRoomNames()) || roomNames.isEmpty()){
+            roomListPanel.clear();
+            for (String roomName : roomResponse.getRoomNames()) {
+                Button joinButton = new Button("Join");
+                HorizontalPanel roomPanel = new HorizontalPanel();
+                roomPanel.add(new Label(roomName));
+                roomPanel.add(joinButton);
+                roomListPanel.add(roomPanel);
 
-            joinButton.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    GWT.log("navigate to room " + roomName);
-                    navigateToRoom(roomName);
-                }
-            });
+                joinButton.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        GWT.log("navigate to room " + roomName);
+                        navigateToRoom(roomName);
+                    }
+                });
+            }
         }
     }
 
