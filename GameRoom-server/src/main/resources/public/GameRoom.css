@@ -32,3 +32,34 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+/* Profile Picture Grid */
+.profile-pic-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Profile Picture Images */
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-pic:hover {
+  transform: scale(1.1);
+  border-color: #4CAF50;
+}
+
+.profile-pic-selected {
+  border-color: #4CAF50;
+  box-shadow: 0 0 10px #4CAF50;
+  transform: scale(1.1);
+}
