@@ -47,4 +47,22 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
             rooms.remove(foundRoom);
         }
     }
+
+    @Override
+    public void addPlayerToRoom(String playerId, Room room) {
+        for (Room room1 : rooms) {
+            if (room1.getName().equals(room.getName())) {
+                room1.addPlayer(playerId);
+            }
+        }
+    }
+
+    @Override
+    public void removePlayerFromRoom(String playerId, Room room) {
+        for (Room room1 : rooms) {
+            if (room1.getName().equals(room.getName())) {
+                room1.removePlayer(playerId);
+            }
+        }
+    }
 }

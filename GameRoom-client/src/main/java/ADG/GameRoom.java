@@ -32,6 +32,7 @@ public class GameRoom {
             RootPanel.get().clear();
             GameLobby gameLobby = new GameLobby();
             gameLobby.onModuleLoad();
+            removePlayerFromRoom();
         });
 
         // Delete room button
@@ -70,6 +71,31 @@ public class GameRoom {
                 });
 
         RootPanel.get().add(roomPanel);
+    }
+
+
+    private void removePlayerFromRoom() {
+        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+
+            @Override
+            public void onFailure(Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(Room room) {
+                gameRoomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                    }
+
+                    @Override
+                    public void onSuccess(Void v) {
+                    }
+                });
+            }
+        });
+
+
     }
 }
 

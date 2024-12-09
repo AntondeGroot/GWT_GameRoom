@@ -12,4 +12,6 @@ public interface GameRoomService extends RemoteService {
     Room getRoom(String roomName);
     String createRoom(Room room);
     void deleteRoom(String roomName);
+    void addPlayerToRoom(String playerId, Room room);
+    void removePlayerFromRoom(String playerId, Room room);
 }

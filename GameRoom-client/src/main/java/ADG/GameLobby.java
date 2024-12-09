@@ -25,6 +25,7 @@ public class GameLobby implements EntryPoint {
     private ArrayList<Room> rooms = new ArrayList<>();
     private CellTable<Room> roomTable = new CellTable<>();
     private ListDataProvider<Room> dataProvider = new ListDataProvider<>();
+    private Timer timer;
 
     /**
      * Create a remote service proxy to talk to the server-side GameRoom service.
@@ -81,15 +82,16 @@ public class GameLobby implements EntryPoint {
         });
 
         // Poll the server every 2 seconds for updated room list
-        Timer timer = new Timer() {
-            @Override
-            public void run() {
-                pollServerForRooms();
-            }
-        };
-        timer.scheduleRepeating(2000);
+        if(timer == null){
+            Timer timer = new Timer() {
+                @Override
+                public void run() {
+                    pollServerForRooms();
+                }
+            };
+            timer.scheduleRepeating(200);
+        }
     }
-
     /**
      * Set up the CellTable to display the list of available rooms.
      */
@@ -106,7 +108,7 @@ public class GameLobby implements EntryPoint {
         TextColumn<Room> nrPlayersColumn = new TextColumn<Room>() {
             @Override
             public String getValue(Room room) {
-                return ""+room.getNrOfPlayers();
+                return ""+room.getNrOfPlayers() + " / 8";
             }
         };
 
@@ -169,6 +171,17 @@ public class GameLobby implements EntryPoint {
         RootPanel.get().clear();
         GameRoom gameRoom = new GameRoom(room.getName());
         gameRoom.load();
+        gameRoomService.addPlayerToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(Void v) {
+
+            }
+        });
     }
 
     /**
