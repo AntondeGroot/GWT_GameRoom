@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.*;
 public class CharacterSelection {
 
     private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
-    private final String roomName;
+    private final Room room;
 
     private VerticalPanel mainPanel = new VerticalPanel();
     private TextBox usernameInput = new TextBox();
@@ -29,8 +29,8 @@ public class CharacterSelection {
             "https://via.placeholder.com/100/00FFFF?text=6"
     };
 
-    public CharacterSelection(String roomName) {
-        this.roomName = roomName;
+    public CharacterSelection(Room room) {
+        this.room = room;
     }
 
     public void load() {
@@ -146,7 +146,7 @@ public class CharacterSelection {
 
         Window.alert("Username: " + username + "\nProfile Picture: " + selectedProfilePicUrl);
 
-        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
@@ -177,32 +177,19 @@ public class CharacterSelection {
 
     private void navigateToRoom(Room room) {
         RootPanel.get().clear();
-        GameRoom gameRoom = new GameRoom(room.getName());
+        GameRoom gameRoom = new GameRoom(room);
         gameRoom.load();
     }
 
     private void removePlayerFromRoom() {
-        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
-
+        gameRoomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
 
             @Override
-            public void onSuccess(Room room) {
-                gameRoomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                    }
-
-                    @Override
-                    public void onSuccess(Void v) {
-                    }
-                });
+            public void onSuccess(Void v) {
             }
         });
-
-
     }
-
 }

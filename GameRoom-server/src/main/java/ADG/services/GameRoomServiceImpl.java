@@ -19,12 +19,16 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
     }
 
     @Override
-    public Room getRoom(String roomName) {
-        Optional<Room> result = rooms.stream().filter(room -> room.getName().equals(roomName)).findFirst();
+    public Room getRoomById(String roomId){
+        Optional<Room> result = rooms.stream().filter(room -> room.getId().equals(roomId)).findFirst();
         if(result.isPresent()) {
+            if(result.get().getId() == null){
+                throw new IllegalArgumentException();
+            }
             return result.get();
+        }else{
+            throw new IllegalArgumentException();
         }
-        return new Room();
     }
 
     @Override

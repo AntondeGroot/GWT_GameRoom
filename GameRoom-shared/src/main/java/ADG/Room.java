@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Room implements IsSerializable {
+    private String id;
     private String createdByUserId;
     private String name;
     private String status;
@@ -19,6 +20,7 @@ public class Room implements IsSerializable {
     public Room(String name, String createdByUserId) {
         setCreatedByUserId(createdByUserId);
         setName(name);
+        setId(UUID.get());
         status = "waiting for players ...";
     }
 
@@ -26,6 +28,14 @@ public class Room implements IsSerializable {
         if (!playerIds.contains(playerId)) {
             playerIds.add(playerId);
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void removePlayer(String playerId) {
@@ -85,7 +95,8 @@ public class Room implements IsSerializable {
     public String toString() {
         return "Room{" +
                 "name='" + name + '\'' +
-                ", userNames=" + userNames.values() +
+                ", id='" + id + '\'' +
+                ", playerIds=" + playerIds +
                 '}';
     }
 }

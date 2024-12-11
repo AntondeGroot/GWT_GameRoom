@@ -9,7 +9,7 @@ import java.util.ArrayList;
 @RemoteServiceRelativePath("gameroom")
 public interface GameRoomService extends RemoteService {
     ArrayList<Room> getRooms();
-    Room getRoom(String roomName);
+    Room getRoomById(String roomId);
     String createRoom(Room room);
     void deleteRoom(String roomName);
     void updateRoom(Room room);

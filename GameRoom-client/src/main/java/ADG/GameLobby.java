@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,6 +35,7 @@ public class GameLobby implements EntryPoint {
 
     public void onModuleLoad() {
         String playerid = Cookie.getPlayerId();
+        History.newItem("");
 
         RootPanel.get().add(mainPanel);
 
@@ -169,7 +171,7 @@ public class GameLobby implements EntryPoint {
      */
     private void navigateToCharacterSelection(Room room) {
         RootPanel.get().clear();
-        CharacterSelection characterSelection = new CharacterSelection(room.getName());
+        CharacterSelection characterSelection = new CharacterSelection(room);
         characterSelection.load();
         gameRoomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override

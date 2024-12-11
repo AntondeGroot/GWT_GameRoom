@@ -1,6 +1,7 @@
 package ADG;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -9,7 +10,8 @@ import com.google.gwt.user.client.ui.*;
 import java.util.HashMap;
 
 public class GameRoom {
-
+    private Room room;
+    private String roomId;
     private String roomName;
     private Room gameroom;
     private Timer timer;
@@ -19,15 +21,16 @@ public class GameRoom {
     private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
     private VerticalPanel playerPanel = new VerticalPanel();
 
-    public GameRoom(String roomName) {
-        this.roomName = roomName;
+    public GameRoom(Room room) {
+        this.room = room;
     }
 
     public void load() {
         VerticalPanel roomPanel = new VerticalPanel();
 
         // Room title
-        Label roomTitle = new Label("Game Room: " + roomName);
+        History.newItem("room="+room.getId());
+        Label roomTitle = new Label("Game Room: " + room.getName());
 //        roomTitle.setStyleName("room-title");
         roomPanel.add(roomTitle);
 
@@ -45,7 +48,7 @@ public class GameRoom {
         // Delete room button
         // only display for the user that created it
         String playerId = Cookie.getPlayerId();
-        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                     }
@@ -114,7 +117,7 @@ public class GameRoom {
 
 
     private void removePlayerFromRoom() {
-        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
 
             @Override
             public void onFailure(Throwable throwable) {
@@ -139,7 +142,7 @@ public class GameRoom {
 
     public void pollServerForPlayers() {
         GWT.log("polling server for players");
-        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
