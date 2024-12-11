@@ -15,8 +15,6 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
 
     @Override
     public ArrayList<Room> getRooms() {
-//        RoomResponse gameRooms = new RoomResponse();
-//        gameRooms.setRoomNames(rooms);
         return rooms;
     }
 
@@ -49,7 +47,17 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
     }
 
     @Override
-    public void addPlayerToRoom(String playerId, Room room) {
+    public void updateRoom(Room room){
+        Optional<Room> result = rooms.stream().filter(r -> r.getName().equals(room.getName())).findFirst();
+        if(result.isPresent()) {
+            Room foundRoom = result.get();
+            rooms.remove(foundRoom);
+            rooms.add(room);
+        }
+    }
+
+    @Override
+    public void addPlayerIdToRoom(String playerId, Room room) {
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.addPlayer(playerId);
@@ -64,5 +72,13 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
                 room1.removePlayer(playerId);
             }
         }
+    }
+
+    @Override
+    public void setUsernameAndProfile(Room room, String userId, String username, String profileId) {
+        room.setUserName(userId, username);
+        room.setUserProfile(userId, profileId);
+
+        updateRoom(room);
     }
 }

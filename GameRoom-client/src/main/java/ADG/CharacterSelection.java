@@ -153,7 +153,17 @@ public class CharacterSelection {
 
             @Override
             public void onSuccess(Room room) {
-                navigateToRoom(room);
+                gameRoomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, selectedProfilePicUrl, new AsyncCallback() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                    }
+
+                    @Override
+                    public void onSuccess(Object o) {
+                        navigateToRoom(room);
+                    }
+                });
+
             }
         });
     }

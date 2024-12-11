@@ -3,6 +3,7 @@ package ADG;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Room implements IsSerializable {
@@ -10,6 +11,8 @@ public class Room implements IsSerializable {
     private String name;
     private String status;
     private ArrayList<String> playerIds = new ArrayList<>();
+    private HashMap<String, String> userProfiles = new HashMap<>(); // Map of playerId to profileId
+    private HashMap<String, String> userNames = new HashMap<>(); // Map of playerId to userName
 
     public Room() {} // Default constructor
 
@@ -49,6 +52,22 @@ public class Room implements IsSerializable {
         return createdByUserId;
     }
 
+    public void setUserProfile(String userId, String profile) {
+        userProfiles.put(userId, profile);
+    }
+
+    public void setUserName(String userId, String userName) {
+        userNames.put(userId, userName);
+    }
+
+    public HashMap<String, String> getUserNames() {
+        return userNames;
+    }
+
+    public HashMap<String, String> getUserProfiles() {
+        return userProfiles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +85,7 @@ public class Room implements IsSerializable {
     public String toString() {
         return "Room{" +
                 "name='" + name + '\'' +
+                ", userNames=" + userNames.values() +
                 '}';
     }
 }

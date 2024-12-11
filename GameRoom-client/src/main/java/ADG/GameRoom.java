@@ -1,16 +1,23 @@
 package ADG;
 
-
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 
+import java.util.HashMap;
+
 public class GameRoom {
 
     private String roomName;
+    private Room gameroom;
+    private Timer timer;
+    private HashMap<String, String> userNames = new HashMap<>();
+    private HashMap<String, String> userProfiles = new HashMap<>();
 
     private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
+    private VerticalPanel playerPanel = new VerticalPanel();
 
     public GameRoom(String roomName) {
         this.roomName = roomName;
@@ -45,6 +52,9 @@ public class GameRoom {
 
                     @Override
                     public void onSuccess(Room room) {
+                        gameroom = room;
+
+                        // only display the delete button for the creator of the room
                         if(room.getCreatedByUserId().equals(playerId)){
                             Button deleteRoomButton = new Button("Delete Room");
                             roomPanel.add(deleteRoomButton);
@@ -71,6 +81,35 @@ public class GameRoom {
                 });
 
         RootPanel.get().add(roomPanel);
+
+        // Poll the server every 2 seconds for updated room list
+        if(timer == null){
+            Timer timer = new Timer() {
+                @Override
+                public void run() {
+                    pollServerForPlayers();
+                }
+            };
+            timer.scheduleRepeating(500);
+        }
+
+    }
+
+    private void drawPlayerList() {
+        GWT.log("drawPlayerList");
+
+        for(String userId: userNames.keySet()){
+            HorizontalPanel playerIndexPanel = new HorizontalPanel();
+
+            String playerName = userNames.get(userId);
+            String userProfile = userProfiles.get(userId);
+            playerIndexPanel.add(new Label(playerName));
+            playerIndexPanel.add(new Label(".  -  ."));
+            playerIndexPanel.add(new Label(userProfile));
+
+            playerPanel.add(playerIndexPanel);
+        }
+        RootPanel.get().add(playerPanel);
     }
 
 
@@ -97,5 +136,27 @@ public class GameRoom {
 
 
     }
+
+    public void pollServerForPlayers() {
+        GWT.log("polling server for players");
+        gameRoomService.getRoom(roomName, new AsyncCallback<Room>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+            }
+
+            @Override
+            public void onSuccess(Room room) {
+                HashMap<String, String> serverUserNames = room.getUserNames();
+                HashMap<String, String> serverUserProfiles =  room.getUserProfiles();
+                if(!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)){
+                    userNames = serverUserNames;
+                    userProfiles = serverUserProfiles;
+                    drawPlayerList();
+                }
+                GWT.log("users = "+userNames.toString());
+            }
+        });
+    }
+
 }
 

@@ -81,7 +81,7 @@ public class GameLobby implements EntryPoint {
             }
         });
 
-        // Poll the server every 2 seconds for updated room list
+        // Poll the server every 0.2 seconds for updated room list
         if(timer == null){
             Timer timer = new Timer() {
                 @Override
@@ -171,7 +171,7 @@ public class GameLobby implements EntryPoint {
         RootPanel.get().clear();
         CharacterSelection characterSelection = new CharacterSelection(room.getName());
         characterSelection.load();
-        gameRoomService.addPlayerToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        gameRoomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
