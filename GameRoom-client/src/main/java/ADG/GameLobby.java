@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
@@ -37,21 +38,24 @@ public class GameLobby implements EntryPoint {
         String playerid = Cookie.getPlayerId();
         History.newItem("");
 
-        RootPanel.get().add(mainPanel);
-
-        // Title
-        Label title = new Label("Game Lobby");
-        mainPanel.add(title);
+        // Header
+        HTML header = new HTML("<h1>Game Lobby</h1>");
+        RootPanel.get().add(header);
 
         // Room creation section
         HorizontalPanel createRoomPanel = new HorizontalPanel();
-        createRoomPanel.add(new Label("Room Name:"));
+        Label createRoomLabel = new Label("Room Name:");
+        createRoomLabel.setStyleName("boldText");
+        createRoomPanel.add(createRoomLabel);
+        roomNameInput.setStyleName("textField");
         createRoomPanel.add(roomNameInput);
+        createRoomButton.setStylePrimaryName("createRoomButton");
         createRoomPanel.add(createRoomButton);
         mainPanel.add(createRoomPanel);
 
         // Room list title
         Label availableRoomsHeader = new Label("Available Rooms:");
+        availableRoomsHeader.setStyleName("boldText");
         mainPanel.add(availableRoomsHeader);
 
         // Setup the room table
@@ -93,6 +97,8 @@ public class GameLobby implements EntryPoint {
             };
             timer.scheduleRepeating(200);
         }
+
+        RootPanel.get().add(mainPanel);
     }
     /**
      * Set up the CellTable to display the list of available rooms.
@@ -123,7 +129,7 @@ public class GameLobby implements EntryPoint {
         };
 
         // Add Join Button Column
-        ButtonCell joinButtonCell = new ButtonCell();
+        ButtonCell joinButtonCell = new StyledButtonCell("joinRoomButton");
         Column<Room, String> joinButtonColumn =
                 new Column<Room, String>(joinButtonCell) {
                     @Override
@@ -137,6 +143,8 @@ public class GameLobby implements EntryPoint {
             GWT.log("Navigating to room: " + room.getName());
             navigateToCharacterSelection(room);
         });
+
+
 
         // Add the columns to the table
         roomTable.addColumn(roomNameColumn, "Room Name");

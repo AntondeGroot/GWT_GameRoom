@@ -63,3 +63,27 @@ h1 {
   box-shadow: 0 0 10px #4CAF50;
   transform: scale(1.1);
 }
+
+.gwt-Button{
+  border-radius: 3px;
+}
+
+.createRoomButton{
+  border-radius: 10px;
+  font-size: 10pt;
+  background-color: #b5e48c;
+}
+
+.joinRoomButton{
+  background-color: #b5e48c;
+  border-radius: 8px;
+}
+
+.textField{
+  margin-left: 20px;
+  margin-right: 5px;
+}
+.boldText{
+  font-weight: bolder;
+  font-size: 16pt;
+}
