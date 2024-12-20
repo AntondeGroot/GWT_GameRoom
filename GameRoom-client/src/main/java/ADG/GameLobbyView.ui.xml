@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+    <g:VerticalPanel ui:field="mainPanel">
+
+        <!-- Header -->
+        <g:HTML>
+            <h1>Game Lobby</h1>
+        </g:HTML>
+
+
+        <!-- Room Creation Section -->
+        <g:HorizontalPanel ui:field="createRoomPanel">
+            <g:Label ui:field="createRoomLabel" text="Room Name:" styleName="boldText" />
+            <g:TextBox ui:field="roomNameInput" styleName="textField" />
+            <g:Button ui:field="createRoomButton" text="Create Room" stylePrimaryName="createRoomButton" />
+        </g:HorizontalPanel>
+
+        <!-- Room List Title -->
+        <g:Label ui:field="availableRoomsHeader" text="Available Rooms:" styleName="boldText" />
+
+        <!-- Room Table -->
+        <c:CellTable ui:field="roomTable" width="100%"/>
+
+    </g:VerticalPanel>
+</ui:UiBinder>
