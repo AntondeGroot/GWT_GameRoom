@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,6 +18,7 @@ public class GameLobbyPresenter implements Presenter{
 
     @Override
     public void start() {
+        History.newItem("");
         bind();
         pollServerForRooms();
     }
@@ -58,15 +60,16 @@ public class GameLobbyPresenter implements Presenter{
                     return;
                 }
                 Room room = new Room(roomName, Cookie.getPlayerId());
-                gameRoomService.createRoom(room, new AsyncCallback<String>() {
+                gameRoomService.createRoom(room, new AsyncCallback<Room>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         Window.alert("Failed to create room: " + throwable.getMessage());
                     }
 
                     @Override
-                    public void onSuccess(String result) {
+                    public void onSuccess(Room result) {
                         Window.alert("Room created successfully.");
+                        presenterManager.switchToCharacterSelection(result);
                     }
                 });
             }

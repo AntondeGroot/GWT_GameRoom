@@ -1,6 +1,7 @@
 package ADG;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,6 +23,7 @@ public class GameRoomPresenter implements Presenter{
 
     @Override
     public void start() {
+        History.newItem("room=" + room.getId());
         bind();
         pollServerForPlayers();
     }

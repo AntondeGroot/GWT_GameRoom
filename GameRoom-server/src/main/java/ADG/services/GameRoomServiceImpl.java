@@ -32,13 +32,13 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
     }
 
     @Override
-    public String createRoom(Room room) throws IllegalArgumentException {
+    public Room createRoom(Room room) throws IllegalArgumentException {
         if (rooms.contains(room) || room.getName().isBlank()) {
             throw new IllegalArgumentException();
         }
 
         rooms.add(room);
-        return room.getName();
+        return room;
     }
 
     @Override

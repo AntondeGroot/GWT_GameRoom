@@ -40,8 +40,8 @@ public class GameRoom {
 
         leaveRoomButton.addClickHandler(event -> {
             RootPanel.get().clear();
-            GameLobby gameLobby = new GameLobby();
-            gameLobby.onModuleLoad();
+//            GameLobby gameLobby = new GameLobby();
+//            gameLobby.onModuleLoad();
             removePlayerFromRoom();
         });
 
@@ -72,8 +72,8 @@ public class GameRoom {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             RootPanel.get().clear();
-                                            GameLobby gameLobby = new GameLobby();
-                                            gameLobby.onModuleLoad();
+//                                            GameLobby gameLobby = new GameLobby();
+//                                            gameLobby.onModuleLoad();
                                         }
                                     });
                                 }
