@@ -13,7 +13,22 @@ import com.google.gwt.user.client.ui.*;
 
 import java.util.ArrayList;
 
-public class GameLobbyPresenter {
+public class GameLobbyPresenter implements Presenter{
+
+    @Override
+    public void start() {
+        bind();
+        pollServerForRooms();
+    }
+
+    @Override
+    public void stop() {
+        // Stop any timers and clear the event handlers
+        if (roomPollingTimer != null) {
+            roomPollingTimer.cancel();
+            roomPollingTimer = null;
+        }
+    }
 
     public interface Display {
         Button getCreateRoomButton();
@@ -22,13 +37,14 @@ public class GameLobbyPresenter {
     }
 
     private final GameLobbyView view;
+    private final PresenterManager presenterManager;
     private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
     private final ArrayList<Room> rooms = new ArrayList<>();
-    private Timer timer;
+    private Timer roomPollingTimer;
 
-    public GameLobbyPresenter(GameLobbyView view) {
+    public GameLobbyPresenter(GameLobbyView view,  PresenterManager presenterManager) {
         this.view = view;
-        bind();
+        this.presenterManager = presenterManager;
     }
 
     private void bind() {
@@ -56,14 +72,14 @@ public class GameLobbyPresenter {
         });
         initializeRoomTable();
         // Poll the server every 0.2 seconds for updated room list
-        if(timer == null){
-            Timer timer = new Timer() {
+        if(roomPollingTimer == null){
+            Timer roomPollingTimer = new Timer() {
                 @Override
                 public void run() {
                     pollServerForRooms();
                 }
             };
-            timer.scheduleRepeating(200);
+            roomPollingTimer.scheduleRepeating(200);
         }
     }
 
@@ -105,7 +121,7 @@ public class GameLobbyPresenter {
         // Set the action for the join button
         joinButtonColumn.setFieldUpdater((index, room, value) -> {
             GWT.log("Navigating to room: " + room.getName());
-            navigateToCharacterSelection(room);
+            navigateToRoom(room);
         });
 
         // Add columns to the table
@@ -174,10 +190,9 @@ public class GameLobbyPresenter {
     /**
      * Navigate to the selected room.
      */
-    private void navigateToCharacterSelection(Room room) {
+    private void navigateToRoom(Room room) {
         RootPanel.get().clear();
-        CharacterSelection characterSelection = new CharacterSelection(room);
-        characterSelection.load();
+        presenterManager.switchToGameRoom(room);
         gameRoomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {

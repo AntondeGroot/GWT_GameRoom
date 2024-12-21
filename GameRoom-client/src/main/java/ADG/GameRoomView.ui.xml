@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+    <g:VerticalPanel>
+        <g:VerticalPanel ui:field="playerSelectionPanel">
+            
+        </g:VerticalPanel>
+        <g:VerticalPanel ui:field="roomPanel">
+            <g:Label ui:field="roomTitle"/>
+            <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
+            <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
+            <g:VerticalPanel ui:field="playerPanel"/>
+            </g:VerticalPanel>
+    </g:VerticalPanel>
+</ui:UiBinder>
