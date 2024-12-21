@@ -3,9 +3,6 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client">
     <g:VerticalPanel>
-        <g:VerticalPanel ui:field="playerSelectionPanel">
-            
-        </g:VerticalPanel>
         <g:VerticalPanel ui:field="roomPanel">
             <g:Label ui:field="roomTitle"/>
             <g:Button ui:field="leaveRoomButton" text="Leave Room"/>

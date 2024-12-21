@@ -12,8 +12,8 @@ public class Room implements IsSerializable {
     private String name;
     private GameStatus status;
     private ArrayList<String> playerIds = new ArrayList<>();
-    private HashMap<String, String> userProfiles = new HashMap<>(); // Map of playerId to profileId
-    private HashMap<String, String> userNames = new HashMap<>(); // Map of playerId to userName
+    private HashMap<String, String> playerProfiles = new HashMap<>(); // Map of playerId to profileId
+    private HashMap<String, String> playerNames = new HashMap<>(); // Map of playerId to userName
 
     public Room() {} // Default constructor
 
@@ -28,6 +28,14 @@ public class Room implements IsSerializable {
         if (!playerIds.contains(playerId)) {
             playerIds.add(playerId);
         }
+    }
+
+    public void addPlayerName(String playerId, String name) {
+        playerNames.put(playerId, name);
+    }
+
+    public void addPlayerProfile(String playerId, String profile) {
+        playerProfiles.put(playerId, profile);
     }
 
     public String getId() {
@@ -66,20 +74,12 @@ public class Room implements IsSerializable {
         return createdByUserId;
     }
 
-    public void setUserProfile(String userId, String profile) {
-        userProfiles.put(userId, profile);
+    public HashMap<String, String> getPlayerNames() {
+        return playerNames;
     }
 
-    public void setUserName(String userId, String userName) {
-        userNames.put(userId, userName);
-    }
-
-    public HashMap<String, String> getUserNames() {
-        return userNames;
-    }
-
-    public HashMap<String, String> getUserProfiles() {
-        return userProfiles;
+    public HashMap<String, String> getPlayerProfiles() {
+        return playerProfiles;
     }
 
     @Override
@@ -101,6 +101,7 @@ public class Room implements IsSerializable {
                 "name='" + name + '\'' +
                 ", id='" + id + '\'' +
                 ", playerIds=" + playerIds +
+                ", userNames=" + playerNames +
                 '}';
     }
 }

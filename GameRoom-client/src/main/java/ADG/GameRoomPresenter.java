@@ -5,7 +5,11 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import java.util.HashMap;
 
 public class GameRoomPresenter implements Presenter{
 
@@ -14,6 +18,8 @@ public class GameRoomPresenter implements Presenter{
     private final GameRoomView view;
     private Room room;
     private final PresenterManager presenterManager;
+    private HashMap<String, String> userNames = new HashMap<>();
+    private HashMap<String, String> userProfiles = new HashMap<>();
 
     public GameRoomPresenter(GameRoomView view, Room model, PresenterManager presenterManager) {
         this.view = view;
@@ -25,7 +31,7 @@ public class GameRoomPresenter implements Presenter{
     public void start() {
         History.newItem("room=" + room.getId());
         bind();
-        pollServerForPlayers();
+        startPollingServer();
     }
 
     @Override
@@ -88,25 +94,44 @@ public class GameRoomPresenter implements Presenter{
         return true;
     }
 
+    public void startPollingServer(){
+        // Poll the server every 2 seconds for updated room list
+        if(playerPollingTimer == null){
+            playerPollingTimer = new Timer() {
+                @Override
+                public void run() {
+                    pollServerForPlayers();
+                }
+            };
+            playerPollingTimer.scheduleRepeating(500);
+        }
+    }
+
     public void pollServerForPlayers() {
         GWT.log("polling server for players");
-//        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
-//            @Override
-//            public void onFailure(Throwable throwable) {
-//            }
-//
-//            @Override
-//            public void onSuccess(Room room) {
-//                HashMap<String, String> serverUserNames = room.getUserNames();
-//                HashMap<String, String> serverUserProfiles =  room.getUserProfiles();
-//                if(!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)){
-//                    userNames = serverUserNames;
-//                    userProfiles = serverUserProfiles;
-//                    drawPlayerList();
-//                }
-//                GWT.log("users = "+userNames.toString());
-//            }
-//        });
+        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                GWT.log(throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(Room room) {
+                HashMap<String, String> serverUserNames = room.getPlayerNames();
+                HashMap<String, String> serverUserProfiles =  room.getPlayerProfiles();
+                if(!serverUserNames.equals(userNames)){
+                    // || !serverUserProfiles.equals(userProfiles)
+                    userNames = serverUserNames;
+                    userProfiles = serverUserProfiles;
+                    GWT.log("drawing player names: "+serverUserNames);
+                    drawPlayerList(userNames, userProfiles);
+                }
+                GWT.log(""+!serverUserNames.equals(userNames));
+                GWT.log("servernames: "+serverUserNames);
+                GWT.log("users = " + userNames.toString());
+                GWT.log("Room = " + room);
+            }
+        });
     }
 
     private void removePlayerFromRoom() {
@@ -119,5 +144,18 @@ public class GameRoomPresenter implements Presenter{
             public void onSuccess(Void v) {
             }
         });
+    }
+
+    public void drawPlayerList(HashMap<String, String> userNames, HashMap<String, String> userProfiles) {
+        view.getPlayerPanel().clear();
+        for (String userId : userNames.keySet()) {
+            HorizontalPanel playerIndexPanel = new HorizontalPanel();
+            String playerName = userNames.get(userId);
+            String userProfile = userProfiles.get(userId);
+            playerIndexPanel.add(new Label(playerName));
+            playerIndexPanel.add(new Label(".  -  ."));
+            playerIndexPanel.add(new Label(userProfile));
+            view.getPlayerPanel().add(playerIndexPanel);
+        }
     }
 }
