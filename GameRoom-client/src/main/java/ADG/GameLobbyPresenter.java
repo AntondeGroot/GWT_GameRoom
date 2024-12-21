@@ -41,6 +41,7 @@ public class GameLobbyPresenter implements Presenter{
     private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
     private final ArrayList<Room> rooms = new ArrayList<>();
     private Timer roomPollingTimer;
+    private boolean isInitialized = false;
 
     public GameLobbyPresenter(GameLobbyView view,  PresenterManager presenterManager) {
         this.view = view;
@@ -70,7 +71,7 @@ public class GameLobbyPresenter implements Presenter{
                 });
             }
         });
-        initializeRoomTable();
+        initializeRoomTableHeaders();
         // Poll the server every 0.2 seconds for updated room list
         if(roomPollingTimer == null){
             Timer roomPollingTimer = new Timer() {
@@ -83,7 +84,12 @@ public class GameLobbyPresenter implements Presenter{
         }
     }
 
-    private void initializeRoomTable() {
+    private void initializeRoomTableHeaders() {
+        if(isInitialized){
+            return;
+        }
+        isInitialized = true;
+
         // Add Room Name Column
         TextColumn<Room> roomNameColumn = new TextColumn<Room>() {
             @Override
