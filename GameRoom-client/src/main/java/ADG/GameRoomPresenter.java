@@ -38,6 +38,7 @@ public class GameRoomPresenter implements Presenter{
     private void bind(){
         view.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
         view.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
+        view.getDeleteRoomButton().setVisible(displayDeleteButton());
     }
 
     private void leaveRoom() {
@@ -73,6 +74,16 @@ public class GameRoomPresenter implements Presenter{
 //                }
 //            });
         }
+    }
+
+    public boolean displayDeleteButton(){
+        if(!room.getCreatedByUserId().equals(Cookie.getPlayerId())){
+            return false;
+        }
+        if(room.getStatus() == GameStatus.PLAYING){
+            return false;
+        }
+        return true;
     }
 
     public void pollServerForPlayers() {

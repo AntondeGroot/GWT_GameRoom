@@ -10,7 +10,7 @@ public class Room implements IsSerializable {
     private String id;
     private String createdByUserId;
     private String name;
-    private String status;
+    private GameStatus status;
     private ArrayList<String> playerIds = new ArrayList<>();
     private HashMap<String, String> userProfiles = new HashMap<>(); // Map of playerId to profileId
     private HashMap<String, String> userNames = new HashMap<>(); // Map of playerId to userName
@@ -21,7 +21,7 @@ public class Room implements IsSerializable {
         setCreatedByUserId(createdByUserId);
         setName(name);
         setId(UUID.get());
-        status = "waiting for players ...";
+        status = GameStatus.WAITING;
     }
 
     public void addPlayer(String playerId) {
@@ -45,6 +45,10 @@ public class Room implements IsSerializable {
     public String getName() {
         return name;
     }
+
+    public GameStatus getStatus() {return status;}
+
+    public void setStatus(GameStatus status) {this.status = status;}
 
     public void setName(String name) {
         this.name = name;
