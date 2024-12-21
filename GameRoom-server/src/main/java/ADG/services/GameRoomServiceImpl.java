@@ -80,9 +80,11 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
 
     @Override
     public void setUsernameAndProfile(Room room, String userId, String username, String profileId) {
-        room.setUserName(userId, username);
-        room.setUserProfile(userId, profileId);
-
-        updateRoom(room);
+        for (Room room1 : rooms) {
+            if (room1.getName().equals(room.getName())) {
+                room1.addPlayerName(userId, username);
+                room1.addPlayerProfile(userId, profileId);
+            }
+        }
     }
 }

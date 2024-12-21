@@ -44,6 +44,8 @@ class GameRoomView extends Composite {
         return deleteRoomButton;
     }
 
+    public VerticalPanel getPlayerPanel() {return playerPanel;}
+
     public void drawPlayerList(HashMap<String, String> userNames, HashMap<String, String> userProfiles) {
         playerPanel.clear();
         for (String userId : userNames.keySet()) {

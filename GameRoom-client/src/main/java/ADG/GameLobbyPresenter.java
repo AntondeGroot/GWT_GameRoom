@@ -69,7 +69,7 @@ public class GameLobbyPresenter implements Presenter{
                     @Override
                     public void onSuccess(Room result) {
                         Window.alert("Room created successfully.");
-                        presenterManager.switchToCharacterSelection(result);
+                        navigateToCharacterSelection(room);
                     }
                 });
             }
@@ -130,9 +130,8 @@ public class GameLobbyPresenter implements Presenter{
         // Set the action for the join button
         joinButtonColumn.setFieldUpdater((index, room, value) -> {
             GWT.log("Navigating to room: " + room.getName());
-            navigateToRoom(room);
+            navigateToCharacterSelection(room);
         });
-
         // Add columns to the table
         view.getRoomTable().addColumn(roomNameColumn, "Room Name");
         view.getRoomTable().addColumn(nrPlayersColumn, "Players");
@@ -199,22 +198,24 @@ public class GameLobbyPresenter implements Presenter{
     /**
      * Navigate to the selected room.
      */
-    private void navigateToRoom(Room room) {
-        RootPanel.get().clear();
-        // Implement
-        // when user is not in a room yet, go to Character Selection
-        // reserve his place in the room
+    private void navigateToCharacterSelection(Room room) {
         presenterManager.switchToCharacterSelection(room);
+        addPlayerIdToRoom(room);
+    }
+
+    private void addPlayerIdToRoom(Room room){
         gameRoomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
+                GWT.log("Failed to add user to room");
             }
 
             @Override
             public void onSuccess(Void v) {
+                GWT.log("Succesfully added user to room");
             }
         });
-
-        // else go to Room directly
     }
+
+
 }

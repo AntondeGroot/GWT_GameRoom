@@ -87,6 +87,17 @@ public class CharacterSelectionPresenter implements Presenter {
 
         Window.alert("Username: " + username + "\nProfile Picture: " + selectedProfilePicUrl);
         presenterManager.switchToGameRoom(room);
+        gameRoomService.setUsernameAndProfile(room, Cookie.getPlayerId() , username, selectedProfilePicUrl, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(Void unused) {
+
+            }
+        });
     }
 
     private void onBackToLobby() {
