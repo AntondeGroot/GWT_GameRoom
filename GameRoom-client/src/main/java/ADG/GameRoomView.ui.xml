@@ -7,6 +7,13 @@
             <g:Label ui:field="roomTitle"/>
             <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
             <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
+
+            <g:SimplePanel styleName="custom-hr" />
+            <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
+            <g:HorizontalPanel>
+                <g:TextArea ui:field="messageInputField" styleName="MessageInputField"/>
+                <g:Button ui:field="sendMessageButton" text="Send" styleName="sendButton"/>
+            </g:HorizontalPanel>
             <g:VerticalPanel ui:field="playerPanel"/>
             </g:VerticalPanel>
     </g:VerticalPanel>

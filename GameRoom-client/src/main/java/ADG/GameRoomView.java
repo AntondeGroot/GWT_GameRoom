@@ -27,6 +27,15 @@ class GameRoomView extends Composite {
     @UiField
     VerticalPanel playerPanel;
 
+    @UiField
+    Button sendMessageButton;
+
+    @UiField
+    TextArea messageDisplayField;
+
+    @UiField
+    TextArea messageInputField;
+
     public GameRoomView() {
         // Call UiBinder to initialize the layout
         initWidget(uiBinder.createAndBindUi(this));
@@ -45,6 +54,12 @@ class GameRoomView extends Composite {
     }
 
     public VerticalPanel getPlayerPanel() {return playerPanel;}
+
+    public TextArea getMessageDisplayField() {return messageDisplayField;}
+
+    public TextArea getMessageInputField() {return messageInputField;}
+
+    public Button getSendMessageButton() {return sendMessageButton;}
 
     public void drawPlayerList(HashMap<String, String> userNames, HashMap<String, String> userProfiles) {
         playerPanel.clear();
