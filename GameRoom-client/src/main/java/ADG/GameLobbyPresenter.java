@@ -114,7 +114,16 @@ public class GameLobbyPresenter implements Presenter{
         TextColumn<Room> statusColumn = new TextColumn<Room>() {
             @Override
             public String getValue(Room room) {
-                return "waiting for players ...";
+                switch (room.getStatus()) {
+                    case PLAYING:
+                        return "Playing";
+                    case WAITING:
+                        return "Waiting for players ...";
+                    case FULL:
+                        return "Full";
+                    default:
+                        return "";
+                }
             }
         };
 
