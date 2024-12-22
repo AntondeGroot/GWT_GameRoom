@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client">
-    <g:VerticalPanel ui:field="mainPanel">
+    <g:VerticalPanel ui:field="mainPanel" width="100%">
 
         <!-- Header -->
         <g:HTML>
@@ -21,7 +21,7 @@
         <g:Label ui:field="availableRoomsHeader" text="Available Rooms:" styleName="boldText" />
 
         <!-- Room Table -->
-        <c:CellTable ui:field="roomTable" width="100%"/>
+        <c:CellTable ui:field="roomTable" />
 
     </g:VerticalPanel>
 </ui:UiBinder>

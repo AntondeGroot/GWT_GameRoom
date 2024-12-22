@@ -6,7 +6,6 @@ h1 {
   font-size: 2em;
   font-weight: bold;
   color: #777777;
-  margin: 40px 0px 70px;
   text-align: center;
 }
 
@@ -105,7 +104,7 @@ h1 {
   border-radius: 4px;
   padding: 8px;
   margin: 10px;
-  width: 1000px;
+  width: 500px;
   height: 200px;
   resize: none;
 }
@@ -119,7 +118,7 @@ h1 {
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
-  width: 1000px;
+  width: 500px;
   height: 20px;
   resize: none;
 }
@@ -131,4 +130,17 @@ h1 {
   background-color: #ccc;
   margin: 10px 0;
   width: 100%;
+}
+
+.gameArea{
+  color: #4CAF50;
+  background-color: orange;
+  width: 800px;
+  height: 800px;
+}
+
+.bottom-aligned{
+  position:absolute;
+  bottom:0;
+  margin-bottom: 75px;
 }

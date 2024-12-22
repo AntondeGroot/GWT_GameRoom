@@ -2,20 +2,28 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client">
-    <g:VerticalPanel>
-        <g:VerticalPanel ui:field="roomPanel">
-            <g:Label ui:field="roomTitle"/>
-            <g:Button ui:field="startGameButton" text="Start Game" visible="false"/>
-            <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
-            <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
-
-            <g:SimplePanel styleName="custom-hr" />
-            <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
-            <g:HorizontalPanel>
-                <g:TextArea ui:field="messageInputField" styleName="MessageInputField"/>
-                <g:Button ui:field="sendMessageButton" text="Send" styleName="sendButton"/>
-            </g:HorizontalPanel>
+    <g:HorizontalPanel>
+        <g:VerticalPanel width="70%">
+            <g:FlowPanel ui:field="gameArea" styleName="gameArea"/>
+        </g:VerticalPanel>
+        <g:VerticalPanel width="30%">
             <g:VerticalPanel ui:field="playerPanel"/>
+            <g:VerticalPanel ui:field="roomPanel" styleName="full-height">
+                <g:VerticalPanel>
+                    <g:Label ui:field="roomTitle"/>
+                    <g:Button ui:field="startGameButton" text="Start Game" visible="false"/>
+                    <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
+                    <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
+                </g:VerticalPanel>
+                <g:VerticalPanel styleName="bottom-aligned">
+                    <g:SimplePanel styleName="custom-hr" />
+                    <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
+                    <g:HorizontalPanel>
+                        <g:TextArea ui:field="messageInputField" styleName="MessageInputField"/>
+                        <g:Button ui:field="sendMessageButton" text="Send" styleName="sendButton"/>
+                    </g:HorizontalPanel>
+                </g:VerticalPanel>
             </g:VerticalPanel>
-    </g:VerticalPanel>
+        </g:VerticalPanel>
+    </g:HorizontalPanel>
 </ui:UiBinder>

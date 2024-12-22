@@ -13,6 +13,9 @@ class GameRoomView extends Composite {
     private static GameRoomUiBinder uiBinder = GWT.create(GameRoomUiBinder.class);
 
     @UiField
+    FlowPanel gameArea;
+
+    @UiField
     VerticalPanel roomPanel;
 
     @UiField
