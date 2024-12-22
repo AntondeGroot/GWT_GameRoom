@@ -48,6 +48,8 @@ public class Room implements IsSerializable {
 
     public void removePlayer(String playerId) {
         playerIds.remove(playerId);
+        playerNames.remove(playerId);
+        playerProfiles.remove(playerId);
     }
 
     public String getName() {
