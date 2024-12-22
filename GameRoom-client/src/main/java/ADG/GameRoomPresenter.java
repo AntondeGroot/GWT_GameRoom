@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class GameRoomPresenter implements Presenter{
 
-    private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
+    private final GameRoomServiceAsync gameRoomService;
     private Timer playerPollingTimer;
     private final GameRoomView view;
     private Room room;
@@ -22,10 +22,11 @@ public class GameRoomPresenter implements Presenter{
     private HashMap<String, String> userNames = new HashMap<>();
     private HashMap<String, String> userProfiles = new HashMap<>();
 
-    public GameRoomPresenter(GameRoomView view, Room model, PresenterManager presenterManager) {
+    public GameRoomPresenter(GameRoomView view, Room model, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
         this.view = view;
         this.room = model;
         this.presenterManager = presenterManager;
+        this.gameRoomService = gameRoomService;
     }
 
     @Override

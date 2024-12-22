@@ -40,14 +40,15 @@ public class GameLobbyPresenter implements Presenter{
 
     private final GameLobbyView view;
     private final PresenterManager presenterManager;
-    private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
+    private final GameRoomServiceAsync gameRoomService;
     private final ArrayList<Room> rooms = new ArrayList<>();
     private Timer roomPollingTimer;
     private boolean isInitialized = false;
 
-    public GameLobbyPresenter(GameLobbyView view,  PresenterManager presenterManager) {
+    public GameLobbyPresenter(GameLobbyView view,  PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
         this.view = view;
         this.presenterManager = presenterManager;
+        this.gameRoomService = gameRoomService;
     }
 
     private void bind() {

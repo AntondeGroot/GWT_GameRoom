@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CharacterSelectionPresenter implements Presenter {
 
-    private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
+    private final GameRoomServiceAsync gameRoomService;
     private final CharacterSelectionView view;
     private Room room; // the model
     private final PresenterManager presenterManager;
@@ -24,10 +24,11 @@ public class CharacterSelectionPresenter implements Presenter {
     };
     private String selectedProfilePicUrl;
 
-    public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager) {
+    public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
         this.view = view;
         this.room = room;
         this.presenterManager = presenterManager;
+        this.gameRoomService = gameRoomService;
         bind();
         loadProfilePictures();
     }
