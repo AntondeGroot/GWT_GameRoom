@@ -57,40 +57,38 @@ public class GameRoomPresenter implements Presenter{
         view.getSendMessageButton().addClickHandler(event -> sendMessage());
     }
 
+    private void sendMessageToServer(String inputText){
+        Message message = new Message(getCurrentTime(), userNames.get(Cookie.getPlayerId()), inputText);
+        messageService.sendMessage(room.getId(), message, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(Void v) {
+
+            }
+        });
+    }
+
     private void sendMessage() {
         String inputText = view.getMessageInputField().getText();
         if(!inputText.isEmpty()){
-            Message message = new Message(getCurrentTime(), userNames.get(Cookie.getPlayerId()), inputText);
-            messageService.sendMessage(room.getId(), message, new AsyncCallback<Void>() {
-                @Override
-                public void onFailure(Throwable throwable) {
-
-                }
-
-                @Override
-                public void onSuccess(Void v) {
-
-                }
-            });
+            sendMessageToServer(inputText);
             view.getMessageInputField().setText("");
         }
     }
 
     private void leaveRoom() {
         RootPanel.get().clear();
-//        gameRoomService.removePlayerFromRoom(playerId, room, new AsyncCallback<Void>() {
-//            @Override
-//            public void onFailure(Throwable throwable) {
-//                // Handle failure
-//            }
-//
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//                // Successfully removed player from room
-//            }
-//        });
         removePlayerFromRoom();
+        sendLeaveMessage();
         presenterManager.switchToLobby();
+    }
+
+    private void sendLeaveMessage() {
+        sendMessageToServer("has left the room");
     }
 
     private void deleteRoom() {
