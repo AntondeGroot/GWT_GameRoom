@@ -5,6 +5,7 @@
     <g:VerticalPanel>
         <g:VerticalPanel ui:field="roomPanel">
             <g:Label ui:field="roomTitle"/>
+            <g:Button ui:field="startGameButton" text="Start Game" visible="false"/>
             <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
             <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
 

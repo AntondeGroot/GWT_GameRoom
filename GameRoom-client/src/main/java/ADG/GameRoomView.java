@@ -25,6 +25,9 @@ class GameRoomView extends Composite {
     Button deleteRoomButton;
 
     @UiField
+    Button startGameButton;
+
+    @UiField
     VerticalPanel playerPanel;
 
     @UiField
@@ -51,6 +54,10 @@ class GameRoomView extends Composite {
 
     public Button getDeleteRoomButton() {
         return deleteRoomButton;
+    }
+
+    public Button getStartGameButton() {
+        return startGameButton;
     }
 
     public VerticalPanel getPlayerPanel() {return playerPanel;}

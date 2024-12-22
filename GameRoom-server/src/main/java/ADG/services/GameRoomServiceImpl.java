@@ -1,6 +1,7 @@
 package ADG.services;
 
 import ADG.GameRoomService;
+import ADG.GameStatus;
 import ADG.Room;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import jakarta.servlet.annotation.WebServlet;
@@ -83,6 +84,15 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
             if (room1.getName().equals(room.getName())) {
                 room1.addPlayerName(userId, username);
                 room1.addPlayerProfile(userId, profileId);
+            }
+        }
+    }
+
+    @Override
+    public void startGame(String roomId) {
+        for (Room room1 : rooms) {
+            if (room1.getId().equals(roomId)) {
+                room1.setStatus(GameStatus.PLAYING);
             }
         }
     }

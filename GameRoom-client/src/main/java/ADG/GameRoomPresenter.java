@@ -53,8 +53,29 @@ public class GameRoomPresenter implements Presenter{
     private void bind(){
         view.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
         view.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
-        view.getDeleteRoomButton().setVisible(displayDeleteButton());
+        view.getDeleteRoomButton().setVisible(displayButtonForCreatorOfRoom());
+        view.getDeleteRoomButton().setEnabled(displayButtonForCreatorOfRoom());
+        view.getStartGameButton().addClickHandler(event -> startGame());
+        view.getStartGameButton().setVisible(displayButtonForCreatorOfRoom());
+        view.getStartGameButton().setEnabled(displayButtonForCreatorOfRoom());
         view.getSendMessageButton().addClickHandler(event -> sendMessage());
+    }
+
+    private void startGame() {
+        gameRoomService.startGame(room.getId(), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+
+            }
+
+            @Override
+            public void onSuccess(Void unused) {
+                view.getStartGameButton().setVisible(false);
+                view.getStartGameButton().setEnabled(false);
+                view.getDeleteRoomButton().setVisible(false);
+                view.getDeleteRoomButton().setEnabled(false);
+            }
+        });
     }
 
     private void sendMessageToServer(String inputText){
@@ -109,7 +130,7 @@ public class GameRoomPresenter implements Presenter{
         }
     }
 
-    public boolean displayDeleteButton(){
+    public boolean displayButtonForCreatorOfRoom(){
         if(!room.getCreatedByUserId().equals(Cookie.getPlayerId())){
             return false;
         }
