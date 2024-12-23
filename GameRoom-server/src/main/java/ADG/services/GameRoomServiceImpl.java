@@ -89,12 +89,14 @@ public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoo
     }
 
     @Override
-    public void startGame(String roomId) {
+    public Room startGame(String roomId) {
         for (Room room1 : rooms) {
             if (room1.getId().equals(roomId)) {
                 room1.setStatus(GameStatus.PLAYING);
+                return room1;
             }
         }
+        return null;
     }
 
 }

@@ -18,17 +18,18 @@ public class GameLobbyPresenter implements Presenter{
     private final ArrayList<Room> rooms = new ArrayList<>();
     private Timer roomPollingTimer;
     private boolean isInitialized = false;
+    private PollingService pollingService = new PollingService();
 
     @Override
     public void start() {
         History.newItem("");
         bind();
-        startPollingTimer();
+        pollingService.startPolling(POLLING_INTERVAL_MS, this::pollServerForRooms);
     }
 
     @Override
     public void stop() {
-        stopPollingTimer();
+        pollingService.stopPolling();
     }
 
     public GameLobbyPresenter(GameLobbyView view, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
@@ -62,26 +63,6 @@ public class GameLobbyPresenter implements Presenter{
         view.updateRoomTable(rooms);
     }
 
-    private void startPollingTimer(){
-        // Poll the server every 0.2 seconds for updated room list
-        if(roomPollingTimer == null){
-            roomPollingTimer = new Timer() {
-                @Override
-                public void run() {
-                    pollServerForRooms();
-                }
-            };
-            roomPollingTimer.scheduleRepeating(POLLING_INTERVAL_MS);
-        }
-    }
-
-    private void stopPollingTimer(){
-        // Stop any timers and clear the event handlers
-        if (roomPollingTimer != null) {
-            roomPollingTimer.cancel();
-            roomPollingTimer = null;
-        }
-    }
     /**
      * Poll the server to get the list of available rooms.
      */
