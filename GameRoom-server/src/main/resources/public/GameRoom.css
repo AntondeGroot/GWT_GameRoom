@@ -144,3 +144,14 @@ h1 {
   bottom:0;
   margin-bottom: 75px;
 }
+
+.lobbyMainPanel{
+  display: flex;
+  justify-content: center;
+  height: 97vh;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fae5aa;
+  border-color: #4CAF50;
+  border-radius: 20px;
+}
