@@ -192,8 +192,15 @@ public class GameRoomPresenter implements Presenter{
             public void onSuccess(ArrayList<Message> messages) {
                 GWT.log("messages = "+messages);
                 StringBuilder output = new StringBuilder();
+                String lastTimeStamp = "";
                 for(Message message : messages){
-                    output.append(message);
+                    if(!lastTimeStamp.equals(message.getTimestamp())){
+                        lastTimeStamp = message.getTimestamp();
+                        output.append(lastTimeStamp);
+                    }else{
+                        output.append("     ");
+                    }
+                    output.append(" ").append(message.getNameSender()).append(" : ").append(message.getMessage());
                     output.append("\n");
                 }
                 view.getMessageDisplayField().setText(output.toString());
