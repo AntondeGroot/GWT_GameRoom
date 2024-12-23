@@ -21,6 +21,7 @@ public class GameRoomPresenter implements Presenter{
     private final MessageServiceAsync messageService;
     private Timer playerPollingTimer;
     private final GameRoomView view;
+    private ArrayList<Message> storedMessages = new ArrayList<>();
     private Room room;
     private final PresenterManager presenterManager;
     private HashMap<String, String> userNames = new HashMap<>();
@@ -155,7 +156,6 @@ public class GameRoomPresenter implements Presenter{
     }
 
     public void pollServerForPlayers() {
-        GWT.log("polling server for players");
         gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -167,6 +167,7 @@ public class GameRoomPresenter implements Presenter{
                 HashMap<String, String> serverUserNames = room.getPlayerNames();
                 HashMap<String, String> serverUserProfiles =  room.getPlayerProfiles();
                 if(!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)){
+                    GWT.log("updating users");
                     userNames = serverUserNames;
                     userProfiles = serverUserProfiles;
                     GWT.log("drawing player names: "+serverUserNames);
@@ -181,7 +182,6 @@ public class GameRoomPresenter implements Presenter{
     }
 
     public void pollServerForMessages() {
-        GWT.log("polling server for messages");
         messageService.getMessages(room.getId(), new AsyncCallback<ArrayList<Message>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -189,21 +189,23 @@ public class GameRoomPresenter implements Presenter{
             }
 
             @Override
-            public void onSuccess(ArrayList<Message> messages) {
-                GWT.log("messages = "+messages);
-                StringBuilder output = new StringBuilder();
-                String lastTimeStamp = "";
-                for(Message message : messages){
-                    if(!lastTimeStamp.equals(message.getTimestamp())){
-                        lastTimeStamp = message.getTimestamp();
-                        output.append(lastTimeStamp);
-                    }else{
-                        output.append("     ");
+            public void onSuccess(ArrayList<Message> fetchedMessages) {
+                if(!fetchedMessages.equals(storedMessages)){
+                    storedMessages = fetchedMessages;
+                    StringBuilder output = new StringBuilder();
+                    String lastTimeStamp = "";
+                    for(Message message : fetchedMessages){
+                        if(!lastTimeStamp.equals(message.getTimestamp())){
+                            lastTimeStamp = message.getTimestamp();
+                            output.append(lastTimeStamp);
+                        }else{
+                            output.append("     ");
+                        }
+                        output.append(" ").append(message.getNameSender()).append(" : ").append(message.getMessage());
+                        output.append("\n");
                     }
-                    output.append(" ").append(message.getNameSender()).append(" : ").append(message.getMessage());
-                    output.append("\n");
+                    view.getMessageDisplayField().setText(output.toString());
                 }
-                view.getMessageDisplayField().setText(output.toString());
             }
         });
     }

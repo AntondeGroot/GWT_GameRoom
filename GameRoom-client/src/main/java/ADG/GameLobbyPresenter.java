@@ -199,9 +199,12 @@ public class GameLobbyPresenter implements Presenter{
 
             @Override
             public void onSuccess(ArrayList<Room> fetchedRooms) {
-                rooms.clear();
-                rooms.addAll(fetchedRooms);
-                updateRoomTable();
+                if(!rooms.equals(fetchedRooms)){
+                    GWT.log("update room list table");
+                    rooms.clear();
+                    rooms.addAll(fetchedRooms);
+                    updateRoomTable();
+                }
             }
         });
     }
