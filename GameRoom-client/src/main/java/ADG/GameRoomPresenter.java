@@ -42,6 +42,7 @@ public class GameRoomPresenter implements Presenter{
     }
     
     private void bind(){
+        view.showRoomName(room.getName());
         view.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
         view.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
         view.getStartGameButton().addClickHandler(event -> startGame());

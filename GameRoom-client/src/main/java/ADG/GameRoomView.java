@@ -1,6 +1,7 @@
 package ADG;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
@@ -20,7 +21,7 @@ class GameRoomView extends Composite {
     VerticalPanel roomPanel;
 
     @UiField
-    Label roomTitle;
+    HeadingElement roomTitle;
 
     @UiField
     Button leaveRoomButton;
@@ -46,10 +47,6 @@ class GameRoomView extends Composite {
     public GameRoomView() {
         // Call UiBinder to initialize the layout
         initWidget(uiBinder.createAndBindUi(this));
-    }
-
-    public Label getRoomTitle() {
-        return roomTitle;
     }
 
     public Button getLeaveRoomButton() {
@@ -121,6 +118,10 @@ class GameRoomView extends Composite {
             output.append("\n");
         }
         messageDisplayField.setText(output.toString());
+    }
+
+    public void showRoomName(String roomName){
+        roomTitle.setInnerText("Room : " + roomName);
     }
 }
 

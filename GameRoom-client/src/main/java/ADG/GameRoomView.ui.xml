@@ -6,12 +6,12 @@
         <g:VerticalPanel width="70%">
             <g:FlowPanel ui:field="gameArea" styleName="gameArea"/>
         </g:VerticalPanel>
-        <g:VerticalPanel width="30%">
+        <g:VerticalPanel>
+            <g:HTMLPanel>
+                <h1 ui:field="roomTitle"/>
+            </g:HTMLPanel>
             <g:VerticalPanel ui:field="playerPanel"/>
             <g:VerticalPanel ui:field="roomPanel" styleName="full-height">
-                <g:VerticalPanel>
-                    <g:Label ui:field="roomTitle"/>
-                </g:VerticalPanel>
                 <g:VerticalPanel styleName="bottom-aligned">
                     <g:HorizontalPanel>
                         <g:Button ui:field="startGameButton" text="Start Game" visible="false"/>
