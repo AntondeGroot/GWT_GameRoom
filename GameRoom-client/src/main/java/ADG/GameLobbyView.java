@@ -95,7 +95,7 @@ public class GameLobbyView extends Composite {
                 new Column<Room, String>(joinButtonCell) {
                     @Override
                     public String getValue(Room room) {
-                        return "Join";
+                        return GameStatus.WAITING.equals(room.getStatus()) ? "Join" : null;
                     }
                 };
 
