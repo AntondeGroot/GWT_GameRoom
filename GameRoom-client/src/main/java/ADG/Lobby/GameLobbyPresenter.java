@@ -1,15 +1,16 @@
-package ADG;
+package ADG.Lobby;
 
+import ADG.*;
+import ADG.Utils.Cookie;
+import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
 
-public class GameLobbyPresenter implements Presenter{
+public class GameLobbyPresenter implements Presenter {
 
     private static final int POLLING_INTERVAL_MS = 200;
     private final GameLobbyView view;

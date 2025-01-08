@@ -1,5 +1,6 @@
 package ADG;
 
+import ADG.Lobby.*;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;

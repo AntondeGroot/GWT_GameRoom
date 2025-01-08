@@ -1,5 +1,9 @@
 package ADG;
 
+import ADG.Lobby.GameRoomService;
+import ADG.Lobby.GameRoomServiceAsync;
+import ADG.Lobby.Room;
+import ADG.Utils.Cookie;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;

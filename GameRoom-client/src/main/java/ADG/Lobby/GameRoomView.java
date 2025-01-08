@@ -1,5 +1,6 @@
-package ADG;
+package ADG.Lobby;
 
+import ADG.Utils.Cookie;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -9,7 +10,7 @@ import com.google.gwt.user.client.ui.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-class GameRoomView extends Composite {
+public class GameRoomView extends Composite {
 
     interface GameRoomUiBinder extends UiBinder<Widget, GameRoomView> {}
     private static GameRoomUiBinder uiBinder = GWT.create(GameRoomUiBinder.class);

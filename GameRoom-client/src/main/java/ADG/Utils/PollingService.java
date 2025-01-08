@@ -1,4 +1,4 @@
-package ADG;
+package ADG.Utils;
 
 import com.google.gwt.user.client.Timer;
 

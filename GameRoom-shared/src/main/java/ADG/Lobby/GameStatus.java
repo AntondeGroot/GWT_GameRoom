@@ -1,4 +1,4 @@
-package ADG;
+package ADG.Lobby;
 
 public enum GameStatus {
     WAITING,

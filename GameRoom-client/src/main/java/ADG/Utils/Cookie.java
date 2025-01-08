@@ -1,5 +1,6 @@
-package ADG;
+package ADG.Utils;
 
+import ADG.UUID;
 import com.google.gwt.user.client.Cookies;
 
 import java.util.Collection;

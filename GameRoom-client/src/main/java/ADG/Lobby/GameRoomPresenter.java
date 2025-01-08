@@ -1,5 +1,8 @@
-package ADG;
+package ADG.Lobby;
 
+import ADG.*;
+import ADG.Utils.Cookie;
+import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
@@ -7,9 +10,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static ADG.TimeUtils.getCurrentTime;
+import static ADG.Utils.TimeUtils.getCurrentTime;
 
-public class GameRoomPresenter implements Presenter{
+public class GameRoomPresenter implements Presenter {
 
     private final GameRoomServiceAsync gameRoomService;
     private final MessageServiceAsync messageService;
