@@ -10,9 +10,9 @@ import com.google.gwt.user.client.ui.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GameRoomView extends Composite {
+public class RoomView extends Composite {
 
-    interface GameRoomUiBinder extends UiBinder<Widget, GameRoomView> {}
+    interface GameRoomUiBinder extends UiBinder<Widget, RoomView> {}
     private static GameRoomUiBinder uiBinder = GWT.create(GameRoomUiBinder.class);
 
     @UiField
@@ -45,7 +45,7 @@ public class GameRoomView extends Composite {
     @UiField
     TextArea messageInputField;
 
-    public GameRoomView() {
+    public RoomView() {
         // Call UiBinder to initialize the layout
         initWidget(uiBinder.createAndBindUi(this));
     }

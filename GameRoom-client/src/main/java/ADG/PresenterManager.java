@@ -7,12 +7,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PresenterManager {
     // Views
-    private final GameLobbyView lobbyView = new GameLobbyView();
-    private final GameRoomView roomView = new GameRoomView();
+    private final LobbyView lobbyView = new LobbyView();
+    private final RoomView roomView = new RoomView();
     private final CharacterSelectionView characterSelectionView = new CharacterSelectionView();
     // Presenters
-    private GameLobbyPresenter lobbyPresenter;
-    private GameRoomPresenter roomPresenter;
+    private LobbyPresenter lobbyPresenter;
+    private RoomPresenter roomPresenter;
     private CharacterSelectionPresenter characterSelectionPresenter;
     private Presenter currentPresenter;
     // Services
@@ -21,14 +21,14 @@ public class PresenterManager {
 
     public void switchToGameRoom(Room room) {
         if (roomPresenter == null) {
-            roomPresenter = new GameRoomPresenter(roomView, room, this, gameRoomServiceAsync, messageServiceAsync);
+            roomPresenter = new RoomPresenter(roomView, room, this, gameRoomServiceAsync, messageServiceAsync);
         }
         switchPresenter(roomPresenter, roomView);
     }
 
     public void switchToLobby() {
         if (lobbyPresenter == null) {
-            lobbyPresenter = new GameLobbyPresenter(lobbyView, this, gameRoomServiceAsync);
+            lobbyPresenter = new LobbyPresenter(lobbyView, this, gameRoomServiceAsync);
         }
         switchPresenter(lobbyPresenter, lobbyView);
     }

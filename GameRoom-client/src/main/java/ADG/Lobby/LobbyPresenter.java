@@ -10,10 +10,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
 
-public class GameLobbyPresenter implements Presenter {
+public class LobbyPresenter implements Presenter {
 
     private static final int POLLING_INTERVAL_MS = 200;
-    private final GameLobbyView view;
+    private final LobbyView view;
     private final PresenterManager presenterManager;
     private final GameRoomServiceAsync gameRoomService;
     private final ArrayList<Room> rooms = new ArrayList<>();
@@ -33,7 +33,7 @@ public class GameLobbyPresenter implements Presenter {
         pollingService.stopPolling();
     }
 
-    public GameLobbyPresenter(GameLobbyView view, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
+    public LobbyPresenter(LobbyView view, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
         this.view = view;
         this.presenterManager = presenterManager;
         this.gameRoomService = gameRoomService;

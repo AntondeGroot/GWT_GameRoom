@@ -12,11 +12,11 @@ import java.util.HashMap;
 
 import static ADG.Utils.TimeUtils.getCurrentTime;
 
-public class GameRoomPresenter implements Presenter {
+public class RoomPresenter implements Presenter {
 
     private final GameRoomServiceAsync gameRoomService;
     private final MessageServiceAsync messageService;
-    private final GameRoomView view;
+    private final RoomView view;
     private ArrayList<Message> storedMessages = new ArrayList<>();
     private Room room;
     private final PresenterManager presenterManager;
@@ -24,7 +24,7 @@ public class GameRoomPresenter implements Presenter {
     private HashMap<String, String> userProfiles = new HashMap<>();
     private PollingService pollingService = new PollingService();
 
-    public GameRoomPresenter(GameRoomView view, Room model, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService, MessageServiceAsync messageService) {
+    public RoomPresenter(RoomView view, Room model, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService, MessageServiceAsync messageService) {
         this.view = view;
         this.room = model;
         this.presenterManager = presenterManager;

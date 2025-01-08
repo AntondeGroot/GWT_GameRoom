@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.*;
 
 import java.util.List;
 
-public class GameLobbyView extends Composite {
+public class LobbyView extends Composite {
 
-    interface GameLobbyViewUiBinder extends UiBinder<Widget, GameLobbyView> {}
+    interface GameLobbyViewUiBinder extends UiBinder<Widget, LobbyView> {}
     private final static GameLobbyViewUiBinder uiBinder = GWT.create(GameLobbyViewUiBinder.class);
 
     @UiField
@@ -38,7 +38,7 @@ public class GameLobbyView extends Composite {
     @UiField
     CellTable<Room> roomTable;
 
-    public GameLobbyView() {
+    public LobbyView() {
         // Call UiBinder to initialize the layout
         initWidget(uiBinder.createAndBindUi(this));
     }
