@@ -15,7 +15,7 @@ public class LobbyPresenter implements Presenter {
     private static final int POLLING_INTERVAL_MS = 200;
     private final LobbyView view;
     private final PresenterManager presenterManager;
-    private final GameRoomServiceAsync gameRoomService;
+    private final RoomServiceAsync roomService;
     private final ArrayList<Room> rooms = new ArrayList<>();
     private Timer roomPollingTimer;
     private boolean isInitialized = false;
@@ -33,10 +33,10 @@ public class LobbyPresenter implements Presenter {
         pollingService.stopPolling();
     }
 
-    public LobbyPresenter(LobbyView view, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
+    public LobbyPresenter(LobbyView view, PresenterManager presenterManager, RoomServiceAsync roomService) {
         this.view = view;
         this.presenterManager = presenterManager;
-        this.gameRoomService = gameRoomService;
+        this.roomService = roomService;
     }
 
     private void bind() {
@@ -68,7 +68,7 @@ public class LobbyPresenter implements Presenter {
      * Poll the server to get the list of available rooms.
      */
     private void pollServerForRooms() {
-        gameRoomService.getRooms(new AsyncCallback<ArrayList<Room>>() {
+        roomService.getRooms(new AsyncCallback<ArrayList<Room>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GWT.log("Failed to fetch rooms: " + throwable.getMessage());
@@ -94,7 +94,7 @@ public class LobbyPresenter implements Presenter {
     }
 
     private void addPlayerIdToRoom(Room room){
-        gameRoomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GWT.log("Failed to add user to room");
@@ -113,7 +113,7 @@ public class LobbyPresenter implements Presenter {
 
     private void createRoom(String roomName) {
         Room room = new Room(roomName, Cookie.getPlayerId());
-        gameRoomService.createRoom(room, new AsyncCallback<Room>() {
+        roomService.createRoom(room, new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
                 view.showAlert("Failed to create room: " + throwable.getMessage());

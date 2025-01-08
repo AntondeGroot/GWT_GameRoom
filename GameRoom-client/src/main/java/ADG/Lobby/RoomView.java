@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 public class RoomView extends Composite {
 
-    interface GameRoomUiBinder extends UiBinder<Widget, RoomView> {}
-    private static GameRoomUiBinder uiBinder = GWT.create(GameRoomUiBinder.class);
+    interface RoomUiBinder extends UiBinder<Widget, RoomView> {}
+    private static RoomUiBinder uiBinder = GWT.create(RoomUiBinder.class);
 
     @UiField
     FlowPanel gameArea;

@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
 
-public interface GameRoomServiceAsync {
+public interface RoomServiceAsync {
     void getRooms(AsyncCallback<ArrayList<Room>> asyncCallback)
             throws IllegalArgumentException;
 

@@ -14,21 +14,21 @@ import static ADG.Utils.TimeUtils.getCurrentTime;
 
 public class RoomPresenter implements Presenter {
 
-    private final GameRoomServiceAsync gameRoomService;
+    private final RoomServiceAsync roomService;
     private final MessageServiceAsync messageService;
-    private final RoomView view;
+    private final RoomView roomView;
     private ArrayList<Message> storedMessages = new ArrayList<>();
-    private Room room;
+    private final Room room;
     private final PresenterManager presenterManager;
     private HashMap<String, String> userNames = new HashMap<>();
     private HashMap<String, String> userProfiles = new HashMap<>();
-    private PollingService pollingService = new PollingService();
+    private final PollingService pollingService = new PollingService();
 
-    public RoomPresenter(RoomView view, Room model, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService, MessageServiceAsync messageService) {
-        this.view = view;
+    public RoomPresenter(RoomView roomView, Room model, PresenterManager presenterManager, RoomServiceAsync roomService, MessageServiceAsync messageService) {
+        this.roomView = roomView;
         this.room = model;
         this.presenterManager = presenterManager;
-        this.gameRoomService = gameRoomService;
+        this.roomService = roomService;
         this.messageService = messageService;
     }
 
@@ -45,24 +45,24 @@ public class RoomPresenter implements Presenter {
     }
     
     private void bind(){
-        view.showRoomName(room.getName());
-        view.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
-        view.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
-        view.getStartGameButton().addClickHandler(event -> startGame());
-        view.getSendMessageButton().addClickHandler(event -> sendMessage());
+        roomView.showRoomName(room.getName());
+        roomView.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
+        roomView.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
+        roomView.getStartGameButton().addClickHandler(event -> startGame());
+        roomView.getSendMessageButton().addClickHandler(event -> sendMessage());
 
-        view.updateCreatorControls(room);
+        roomView.updateCreatorControls(room);
     }
 
     private void startGame() {
-        gameRoomService.startGame(room.getId(), new AsyncCallback<Room>() {
+        roomService.startGame(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
 
             @Override
             public void onSuccess(Room room) {
-                view.updateCreatorControls(room);
+                roomView.updateCreatorControls(room);
             }
         });
     }
@@ -81,10 +81,10 @@ public class RoomPresenter implements Presenter {
     }
 
     private void sendMessage() {
-        String inputText = view.getMessageInputField().getText();
+        String inputText = roomView.getMessageInputField().getText();
         if(!inputText.isEmpty()){
             sendMessageToServer(inputText);
-            view.getMessageInputField().setText("");
+            roomView.getMessageInputField().setText("");
         }
     }
 
@@ -101,7 +101,7 @@ public class RoomPresenter implements Presenter {
     private void deleteRoom() {
         boolean confirmDelete = Window.confirm("Are you sure you want to delete this room?");
         if (confirmDelete) {
-            gameRoomService.deleteRoom(room.getName(), new AsyncCallback<Void>() {
+            roomService.deleteRoom(room.getName(), new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                 }
@@ -120,7 +120,7 @@ public class RoomPresenter implements Presenter {
     }
 
     public void pollServerForPlayers() {
-        gameRoomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
+        roomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GWT.log(throwable.getMessage());
@@ -133,7 +133,7 @@ public class RoomPresenter implements Presenter {
                 if(!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)){
                     userNames = serverUserNames;
                     userProfiles = serverUserProfiles;
-                    view.refreshPlayerList(userNames, userProfiles);
+                    roomView.refreshPlayerList(userNames, userProfiles);
                 }
             }
         });
@@ -150,14 +150,14 @@ public class RoomPresenter implements Presenter {
             public void onSuccess(ArrayList<Message> fetchedMessages) {
                 if(!fetchedMessages.equals(storedMessages)){
                     storedMessages = fetchedMessages;
-                    view.refreshMessages(fetchedMessages);
+                    roomView.refreshMessages(fetchedMessages);
                 }
             }
         });
     }
 
     private void removePlayerFromRoom() {
-        gameRoomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
             }

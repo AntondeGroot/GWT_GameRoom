@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CharacterSelectionPresenter implements Presenter {
 
-    private final GameRoomServiceAsync gameRoomService;
+    private final RoomServiceAsync roomService;
     private final CharacterSelectionView view;
     private Room room; // the model
     private final PresenterManager presenterManager;
@@ -22,11 +22,11 @@ public class CharacterSelectionPresenter implements Presenter {
     };
     private String selectedProfilePicUrl;
 
-    public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, GameRoomServiceAsync gameRoomService) {
+    public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, RoomServiceAsync roomService) {
         this.view = view;
         this.room = room;
         this.presenterManager = presenterManager;
-        this.gameRoomService = gameRoomService;
+        this.roomService = roomService;
         bind();
         loadProfilePictures();
     }
@@ -74,7 +74,7 @@ public class CharacterSelectionPresenter implements Presenter {
         }
 
         presenterManager.switchToGameRoom(room);
-        gameRoomService.setUsernameAndProfile(room, Cookie.getPlayerId() , username, selectedProfilePicUrl, new AsyncCallback<Void>() {
+        roomService.setUsernameAndProfile(room, Cookie.getPlayerId() , username, selectedProfilePicUrl, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
 
@@ -93,7 +93,7 @@ public class CharacterSelectionPresenter implements Presenter {
     }
 
     private void removePlayerFromRoom() {
-        gameRoomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
             }

@@ -1,6 +1,6 @@
 package ADG.services;
 
-import ADG.Lobby.GameRoomService;
+import ADG.Lobby.RoomService;
 import ADG.Lobby.GameStatus;
 import ADG.Lobby.Room;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @SuppressWarnings("serial")
 @WebServlet("/app/gameroom")
-public class GameRoomServiceImpl extends RemoteServiceServlet implements GameRoomService{
+public class RoomServiceImpl extends RemoteServiceServlet implements RoomService {
     private ArrayList<Room> rooms = new ArrayList<>();
 
     @Override

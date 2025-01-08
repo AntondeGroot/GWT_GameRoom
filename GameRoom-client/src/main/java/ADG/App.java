@@ -1,7 +1,7 @@
 package ADG;
 
-import ADG.Lobby.GameRoomService;
-import ADG.Lobby.GameRoomServiceAsync;
+import ADG.Lobby.RoomService;
+import ADG.Lobby.RoomServiceAsync;
 import ADG.Lobby.Room;
 import ADG.Utils.Cookie;
 import com.google.gwt.core.client.EntryPoint;
@@ -25,7 +25,7 @@ public class App implements EntryPoint {
 	 * Create a remote service proxy to talk to the server-side GameRoom service.
 	 */
 
-	private final GameRoomServiceAsync gameRoomService = GWT.create(GameRoomService.class);
+	private final RoomServiceAsync roomService = GWT.create(RoomService.class);
 	private final PresenterManager presenterManager = new PresenterManager();
 
 	/**
@@ -38,7 +38,7 @@ public class App implements EntryPoint {
 		String token = History.getToken();
 		if (token.startsWith("room=")) {
 			String roomId = token.substring("room=".length());
-			gameRoomService.getRoomById(roomId, new AsyncCallback<Room>() {
+			roomService.getRoomById(roomId, new AsyncCallback<Room>() {
 				public void onFailure(Throwable caught) {
 					GWT.log("failed to retrieve room");
 					presenterManager.switchToLobby();

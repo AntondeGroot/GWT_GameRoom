@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 
 @RemoteServiceRelativePath("gameroom")
-public interface GameRoomService extends RemoteService {
+public interface RoomService extends RemoteService {
     ArrayList<Room> getRooms();
     Room getRoomById(String roomId);
     Room createRoom(Room room);
