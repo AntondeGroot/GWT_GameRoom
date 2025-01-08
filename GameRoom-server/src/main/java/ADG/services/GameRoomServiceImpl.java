@@ -1,8 +1,8 @@
 package ADG.services;
 
-import ADG.GameRoomService;
-import ADG.GameStatus;
-import ADG.Room;
+import ADG.Lobby.GameRoomService;
+import ADG.Lobby.GameStatus;
+import ADG.Lobby.Room;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import jakarta.servlet.annotation.WebServlet;
 

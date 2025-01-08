@@ -1,7 +1,7 @@
 package ADG.services;
 
-import ADG.MessageService;
-import ADG.Message;
+import ADG.Lobby.MessageService;
+import ADG.Lobby.Message;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import jakarta.servlet.annotation.WebServlet;
 

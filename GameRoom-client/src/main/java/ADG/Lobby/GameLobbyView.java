@@ -1,4 +1,4 @@
-package ADG;
+package ADG.Lobby;
 
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.core.client.GWT;

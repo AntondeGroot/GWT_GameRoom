@@ -1,5 +1,6 @@
-package ADG;
+package ADG.Lobby;
 
+import ADG.UUID;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.ArrayList;
