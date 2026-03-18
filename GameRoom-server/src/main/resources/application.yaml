@@ -4,11 +4,15 @@ server:
       enabled: false
     path: /error
   forward-headers-strategy: framework
-  port: 8080
+  port: 4100
+
+
 
 spring:
   application:
     name: GameRoom
+  config:
+    import: "games.yaml"
 
   devtools:
     restart:

@@ -59,7 +59,7 @@
           <moduleName>ADG.App</moduleName>
           <moduleShortName>app</moduleShortName>
           <workDir>${basedir}/target/gwt/workDir</workDir>
-          <compilerArgs>
+<compilerArgs>
             <arg>-gen</arg>
             <arg>${basedir}/target/gwt/gen</arg>
           </compilerArgs>

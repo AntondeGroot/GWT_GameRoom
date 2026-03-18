@@ -10,6 +10,8 @@
             <g:HorizontalPanel ui:field="createRoomPanel">
                 <g:Label ui:field="createRoomLabel" text="Room Name:" styleName="boldText" />
                 <g:TextBox ui:field="roomNameInput" styleName="textField" />
+                <g:Label text="Game:" styleName="boldText" />
+                <g:ListBox ui:field="gameListBox" />
                 <g:Button ui:field="createRoomButton" text="Create Room" stylePrimaryName="createRoomButton" />
             </g:HorizontalPanel>
             <g:Label ui:field="availableRoomsHeader" text="Available Rooms:" styleName="boldText" />

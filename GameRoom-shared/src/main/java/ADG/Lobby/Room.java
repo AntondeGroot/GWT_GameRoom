@@ -15,6 +15,9 @@ public class Room implements IsSerializable {
     private ArrayList<String> playerIds = new ArrayList<>();
     private HashMap<String, String> playerProfiles = new HashMap<>(); // Map of playerId to profileId
     private HashMap<String, String> playerNames = new HashMap<>(); // Map of playerId to userName
+    private String gameSessionId;
+    private String gameBaseUrl;
+    private String gameId;
 
     public Room() {} // Default constructor
 
@@ -83,6 +86,34 @@ public class Room implements IsSerializable {
 
     public HashMap<String, String> getPlayerProfiles() {
         return playerProfiles;
+    }
+
+    public ArrayList<String> getPlayerIds() {
+        return playerIds;
+    }
+
+    public String getGameSessionId() {
+        return gameSessionId;
+    }
+
+    public void setGameSessionId(String gameSessionId) {
+        this.gameSessionId = gameSessionId;
+    }
+
+    public String getGameBaseUrl() {
+        return gameBaseUrl;
+    }
+
+    public void setGameBaseUrl(String gameBaseUrl) {
+        this.gameBaseUrl = gameBaseUrl;
+    }
+
+    public String getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     @Override

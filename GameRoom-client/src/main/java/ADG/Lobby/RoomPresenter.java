@@ -127,10 +127,18 @@ public class RoomPresenter implements Presenter {
             }
 
             @Override
-            public void onSuccess(Room room) {
-                HashMap<String, String> serverUserNames = room.getPlayerNames();
-                HashMap<String, String> serverUserProfiles =  room.getPlayerProfiles();
-                if(!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)){
+            public void onSuccess(Room updatedRoom) {
+                if (updatedRoom.getStatus() == GameStatus.PLAYING && updatedRoom.getGameSessionId() != null) {
+                    stop();
+                    String url = updatedRoom.getGameBaseUrl()
+                            + "/?sessionid=" + updatedRoom.getGameSessionId()
+                            + "&playerid=" + Cookie.getPlayerId();
+                    Window.Location.replace(url);
+                    return;
+                }
+                HashMap<String, String> serverUserNames = updatedRoom.getPlayerNames();
+                HashMap<String, String> serverUserProfiles = updatedRoom.getPlayerProfiles();
+                if (!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)) {
                     userNames = serverUserNames;
                     userProfiles = serverUserProfiles;
                     roomView.refreshPlayerList(userNames, userProfiles);

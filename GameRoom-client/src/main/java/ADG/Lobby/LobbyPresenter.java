@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
+import ADG.Lobby.GameDefinition;
 
 public class LobbyPresenter implements Presenter {
 
@@ -25,6 +26,7 @@ public class LobbyPresenter implements Presenter {
     public void start() {
         History.newItem("");
         bind();
+        loadAvailableGames();
         pollingService.startPolling(POLLING_INTERVAL_MS, this::pollServerForRooms);
     }
 
@@ -111,8 +113,28 @@ public class LobbyPresenter implements Presenter {
         return roomName != null && !roomName.trim().isEmpty();
     }
 
+    private void loadAvailableGames() {
+        roomService.getAvailableGames(new AsyncCallback<ArrayList<GameDefinition>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                GWT.log("Failed to load available games: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onSuccess(ArrayList<GameDefinition> games) {
+                view.populateGameList(games);
+            }
+        });
+    }
+
     private void createRoom(String roomName) {
+        String gameId = view.getSelectedGameId();
+        if (gameId == null) {
+            view.showAlert("Please select a game.");
+            return;
+        }
         Room room = new Room(roomName, Cookie.getPlayerId());
+        room.setGameId(gameId);
         roomService.createRoom(room, new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {

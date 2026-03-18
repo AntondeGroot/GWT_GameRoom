@@ -17,4 +17,5 @@ public interface RoomService extends RemoteService {
     void removePlayerFromRoom(String playerId, Room room);
     void setUsernameAndProfile(Room room, String userId, String username, String profileId);
     Room startGame(String roomId);
+    ArrayList<GameDefinition> getAvailableGames();
 }

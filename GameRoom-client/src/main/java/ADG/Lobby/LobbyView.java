@@ -10,6 +10,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LobbyView extends Composite {
@@ -34,6 +35,9 @@ public class LobbyView extends Composite {
 
     @UiField
     Label availableRoomsHeader;
+
+    @UiField
+    ListBox gameListBox;
 
     @UiField
     CellTable<Room> roomTable;
@@ -105,6 +109,18 @@ public class LobbyView extends Composite {
         roomTable.addColumn(nrPlayersColumn, "Players");
         roomTable.addColumn(statusColumn, "Status");
         roomTable.addColumn(joinButtonColumn, "");
+    }
+
+    public void populateGameList(ArrayList<GameDefinition> games) {
+        gameListBox.clear();
+        for (GameDefinition game : games) {
+            gameListBox.addItem(game.getName(), game.getId());
+        }
+    }
+
+    public String getSelectedGameId() {
+        int index = gameListBox.getSelectedIndex();
+        return index >= 0 ? gameListBox.getValue(index) : null;
     }
 
     public void showAlert(String msg){

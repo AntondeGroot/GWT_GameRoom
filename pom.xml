@@ -53,6 +53,10 @@
         <inherited>false</inherited>
         <configuration>
           <launcherDir>${basedir}/GameRoom-server/target/classes/launcherDir/</launcherDir>
+          <codeserverArgs>
+            <arg>-port</arg>
+            <arg>9877</arg>
+          </codeserverArgs>
         </configuration>
       </plugin>
       <plugin>
