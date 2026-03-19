@@ -121,9 +121,11 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                 for (Map.Entry<String, String> entry : room1.getPlayerNames().entrySet()) {
                     String playerId = entry.getKey();
                     String playerName = entry.getValue();
+                    String profilePic = room1.getPlayerProfiles().get(playerId);
                     Map<String, Object> playerRequest = new HashMap<>();
                     playerRequest.put("id", playerId);
                     playerRequest.put("name", playerName);
+                    playerRequest.put("profilePic", profilePic);
                     restTemplate.postForObject(baseUrl + "/games/" + sessionId + "/players", playerRequest, Map.class);
                 }
 
