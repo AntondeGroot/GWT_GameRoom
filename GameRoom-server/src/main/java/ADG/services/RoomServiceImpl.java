@@ -7,6 +7,8 @@ import ADG.Lobby.RoomService;
 import ADG.config.GamesConfig;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import jakarta.servlet.annotation.WebServlet;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +142,26 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public ArrayList<GameDefinition> getAvailableGames() {
-        return new ArrayList<>(gamesConfig.getAvailable());
+        ArrayList<GameDefinition> reachable = new ArrayList<>();
+        for (GameDefinition game : gamesConfig.getAvailable()) {
+            if (isReachable(game.getBaseUrl())) {
+                reachable.add(game);
+            }
+        }
+        return reachable;
+    }
+
+    private boolean isReachable(String baseUrl) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(baseUrl).openConnection();
+            connection.setConnectTimeout(1500);
+            connection.setReadTimeout(1500);
+            connection.setRequestMethod("HEAD");
+            int code = connection.getResponseCode();
+            return code < 500;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }
