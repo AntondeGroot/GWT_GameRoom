@@ -1,8 +1,12 @@
 package ADG.Lobby;
 
 import ADG.Utils.Cookie;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
@@ -72,18 +76,46 @@ public class RoomView extends Composite {
         for (String userId : userNames.keySet()) {
             HorizontalPanel playerIndexPanel = new HorizontalPanel();
             String playerName = userNames.get(userId);
-            String playerProfileUrl = userProfiles.get(userId);
-            // create image
-            Image profilePic = new Image(playerProfileUrl);
-            profilePic.setStyleName("profile-pic-small");
-            profilePic.setWidth("50px");
-            // create player label
-            playerIndexPanel.add(profilePic);
-            Label playerNameLabel = new Label(playerName);
-            playerIndexPanel.add(playerNameLabel);
+            String profileIndex = userProfiles.get(userId);
 
+            Canvas canvas = buildProfileCanvas(profileIndex);
+            playerIndexPanel.add(canvas);
+            playerIndexPanel.add(new Label(playerName));
             playerPanel.add(playerIndexPanel);
         }
+    }
+
+    private Canvas buildProfileCanvas(String profileIndex) {
+        int size = 50;
+        int index = 0;
+        if (profileIndex != null) {
+            try { index = Integer.parseInt(profileIndex); } catch (NumberFormatException ignored) {}
+        }
+        final int spriteIndex = index;
+
+        Canvas canvas = Canvas.createIfSupported();
+        canvas.setWidth(size + "px");
+        canvas.setHeight(size + "px");
+        canvas.setCoordinateSpaceWidth(size);
+        canvas.setCoordinateSpaceHeight(size);
+        canvas.setStyleName("profile-pic-small");
+
+        Image img = new Image();
+        img.setVisible(false);
+        playerPanel.add(img);
+        img.addLoadHandler((LoadEvent e) -> {
+            ImageElement imgEl = ImageElement.as(img.getElement());
+            double sw = 1024 / 4.0;
+            double sh = 1024 / 4.0;
+            double sx = sw * (spriteIndex % 4);
+            double sy = sh * (spriteIndex / 4);
+            Context2d ctx = canvas.getContext2d();
+            ctx.drawImage(imgEl, sx, sy, sw, sh, 0, 0, size, size);
+            img.removeFromParent();
+        });
+        img.setUrl("/profilepics.png");
+
+        return canvas;
     }
     public void updateCreatorControls(Room room){
         startGameButton.setEnabled(displayButtonForCreatorOfRoom(room));
