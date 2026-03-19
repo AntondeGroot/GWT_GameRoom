@@ -536,7 +536,8 @@ td, th, span, p, div, label {
   width: 100%;
   margin-top: 8px;
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(139, 92, 246, 0.25);
 }
 
@@ -545,6 +546,7 @@ td, th, span, p, div, label {
   display: flex;
   align-items: center;
   width: 100%;
+  min-width: 520px;
   box-sizing: border-box;
 }
 
@@ -592,11 +594,11 @@ td, th, span, p, div, label {
   white-space: nowrap;
 }
 
-.room-cell-name    { flex: 0 0 200px; overflow: hidden; text-overflow: ellipsis; }
-.room-cell-game    { flex: 0 0 140px; }
-.room-cell-players { flex: 0 0 90px; }
-.room-cell-status  { flex: 0 0 130px; }
-.room-cell-action  { flex: 0 0 90px; display: flex; justify-content: flex-end; padding-right: 12px; }
+.room-cell-name    { flex: 3 1 120px; overflow: hidden; text-overflow: ellipsis; min-width: 80px; }
+.room-cell-game    { flex: 2 1 90px;  min-width: 60px; }
+.room-cell-players { flex: 1 1 60px;  min-width: 50px; }
+.room-cell-status  { flex: 2 1 80px;  min-width: 60px; }
+.room-cell-action  { flex: 0 0 auto;  display: flex; justify-content: flex-end; padding-right: 12px; padding-left: 8px; }
 
 /* muted/italic only on data rows, not the header */
 .room-table-row .room-cell-game { color: var(--color-text-muted); font-style: italic; }
