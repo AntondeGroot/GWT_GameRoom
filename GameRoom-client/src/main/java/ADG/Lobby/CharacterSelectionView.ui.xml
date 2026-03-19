@@ -11,7 +11,7 @@
         <g:Label text="Select Your Profile Picture:"/>
         <g:FlowPanel ui:field="profilePicGrid" styleName="profile-pic-grid"/>
         <g:Label ui:field="selectedProfileLabel" text="No profile picture selected"/>
-        <g:Button ui:field="confirmButton" text="Confirm"/>
-        <g:Button ui:field="cancelButton" text="Back to Lobby"/>
+        <g:Button ui:field="confirmButton" text="Confirm" stylePrimaryName="confirmButton"/>
+        <g:Button ui:field="cancelButton" text="Back to Lobby" stylePrimaryName="cancelButton"/>
     </g:VerticalPanel>
 </ui:UiBinder>

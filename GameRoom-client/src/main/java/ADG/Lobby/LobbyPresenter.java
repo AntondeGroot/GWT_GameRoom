@@ -5,11 +5,9 @@ import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
-import ADG.Lobby.GameDefinition;
 
 public class LobbyPresenter implements Presenter {
 
@@ -18,8 +16,6 @@ public class LobbyPresenter implements Presenter {
     private final PresenterManager presenterManager;
     private final RoomServiceAsync roomService;
     private final ArrayList<Room> rooms = new ArrayList<>();
-    private Timer roomPollingTimer;
-    private boolean isInitialized = false;
     private PollingService pollingService = new PollingService();
 
     @Override
@@ -50,16 +46,7 @@ public class LobbyPresenter implements Presenter {
             }
             createRoom(roomName);
         });
-        initializeRoomTableHeaders();
-    }
-
-    private void initializeRoomTableHeaders() {
-        if(!isInitialized){
-            isInitialized = true;
-            view.initializeTableHeaders();
-            // Set the action for the join button
-            view.getRoomTable().getColumn(3).setFieldUpdater((index, room, value) -> navigateToCharacterSelection(room));
-        }
+        view.setJoinHandler(room -> navigateToCharacterSelection(room));
     }
 
     private void updateRoomTable() {

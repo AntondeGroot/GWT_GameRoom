@@ -2,30 +2,25 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:c="urn:import:com.google.gwt.user.cellview.client">
-    <g:HorizontalPanel>
-        <g:VerticalPanel width="70%">
-            <g:FlowPanel ui:field="gameArea" styleName="gameArea"/>
-        </g:VerticalPanel>
-        <g:VerticalPanel>
-            <g:HTMLPanel>
-                <h1 ui:field="roomTitle"/>
-            </g:HTMLPanel>
-            <g:VerticalPanel ui:field="playerPanel"/>
-            <g:VerticalPanel ui:field="roomPanel" styleName="full-height">
-                <g:VerticalPanel styleName="bottom-aligned">
-                    <g:HorizontalPanel>
-                        <g:Button ui:field="startGameButton" text="Start Game" visible="false"/>
-                        <g:Button ui:field="leaveRoomButton" text="Leave Room"/>
-                        <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false"/>
-                    </g:HorizontalPanel>
-                    <g:SimplePanel styleName="custom-hr" />
-                    <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
-                    <g:HorizontalPanel>
-                        <g:TextArea ui:field="messageInputField" styleName="MessageInputField"/>
-                        <g:Button ui:field="sendMessageButton" text="Send" styleName="sendButton"/>
-                    </g:HorizontalPanel>
-                </g:VerticalPanel>
+    <g:VerticalPanel>
+        <g:HTMLPanel>
+            <h1 ui:field="roomTitle"/>
+        </g:HTMLPanel>
+        <g:VerticalPanel ui:field="playerPanel"/>
+        <g:VerticalPanel ui:field="roomPanel" styleName="full-height">
+            <g:VerticalPanel styleName="bottom-aligned">
+                <g:HorizontalPanel>
+                    <g:Button ui:field="startGameButton" text="Start Game" visible="false" stylePrimaryName="confirmButton"/>
+                    <g:Button ui:field="leaveRoomButton" text="Leave Room" stylePrimaryName="cancelButton"/>
+                    <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false" stylePrimaryName="deleteButton"/>
+                </g:HorizontalPanel>
+                <g:SimplePanel styleName="custom-hr" />
+                <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
+                <g:HorizontalPanel>
+                    <g:TextArea ui:field="messageInputField" styleName="MessageInputField"/>
+                    <g:Button ui:field="sendMessageButton" text="Send" styleName="sendButton"/>
+                </g:HorizontalPanel>
             </g:VerticalPanel>
         </g:VerticalPanel>
-    </g:HorizontalPanel>
+    </g:VerticalPanel>
 </ui:UiBinder>

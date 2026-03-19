@@ -1,168 +1,525 @@
-/** Add css rules here for your application. */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap');
 
+/* =============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================= */
+:root {
+  --color-primary:        #8b5cf6;
+  --color-primary-light:  rgba(139, 92, 246, 0.15);
+  --color-primary-hover:  #7c3aed;
+  --color-primary-glow:   rgba(139, 92, 246, 0.35);
 
-/** Example rules used by the template application (remove for your app) */
+  --color-accent:         #fb923c;
+  --color-accent-light:   rgba(251, 146, 60, 0.15);
+  --color-accent-hover:   #f97316;
+  --color-accent-glow:    rgba(251, 146, 60, 0.35);
+
+  --color-bg-lobby:       transparent;
+  --color-bg-character:   transparent;
+  --color-bg-input:       rgba(255, 255, 255, 0.07);
+  --color-bg-white:       rgba(255, 255, 255, 0.05);
+
+  --color-text-primary:   #ede8ff;
+  --color-text-muted:     #9485c0;
+  --color-text-heading:   #fb923c;
+
+  --color-border:         rgba(139, 92, 246, 0.4);
+  --color-border-light:   rgba(139, 92, 246, 0.2);
+
+  --color-error:          #f87171;
+
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  20px;
+
+  --shadow-sm:  0 2px 6px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.6);
+
+  --transition: 0.2s ease;
+
+  --font-size-sm:   12px;
+  --font-size-base: 14px;
+  --font-size-md:   16px;
+  --font-size-lg:   18px;
+}
+
+/* =============================================
+   Base & Reset
+   ============================================= */
+body {
+  font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  background: #0a0614 !important;
+  min-height: 100vh;
+}
+
 h1 {
+  font-family: 'Rajdhani', system-ui, sans-serif;
   font-size: 2em;
-  font-weight: bold;
-  color: #777777;
+  font-weight: 700;
+  color: var(--color-text-heading);
   text-align: center;
+  margin: 16px 0;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px rgba(251, 146, 60, 0.5), 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* =============================================
+   Panels / Containers
+   ============================================= */
+.lobbyMainPanel {
+  display: flex;
+  justify-content: center;
+  min-height: 97vh;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #1c1040 0%, #0f0820 100%);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  padding: 8px;
+}
+
+.characterPanel {
+  display: flex;
+  justify-content: center;
+  min-height: 97vh;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #1a0f2e 0%, #0f0820 100%);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(251, 146, 60, 0.2);
+  padding: 8px;
+}
+
+/* =============================================
+   GWT Element Overrides
+   ============================================= */
+.gwt-Label,
+.gwt-HTML,
+.gwt-InlineLabel,
+td, th, span, p, div, label {
+  font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
+  color: var(--color-text-primary);
+}
+
+/* =============================================
+   Typography Helpers
+   ============================================= */
+.boldText {
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.serverResponseLabelError {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+}
+
+/* =============================================
+   Buttons
+   ============================================= */
+/* Confirm / primary action — orange */
+.confirmButton {
+  border-radius: var(--radius-md);
+  padding: 6px 18px;
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(145deg, #fdba74, #f97316);
+  border: 2px solid #ea580c;
+  color: #431407;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+  transition: all var(--transition);
+}
+
+.confirmButton:hover {
+  background: linear-gradient(145deg, #fed7aa, #fb923c);
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 16px rgba(249,115,22,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.confirmButton:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Cancel / secondary action — purple */
+.cancelButton {
+  border-radius: var(--radius-md);
+  padding: 6px 18px;
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(145deg, #c4b5fd, #8b5cf6);
+  border: 2px solid #7c3aed;
+  color: #1e0a40;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: all var(--transition);
+}
+
+.cancelButton:hover {
+  background: linear-gradient(145deg, #ddd6fe, #a78bfa);
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 16px rgba(139,92,246,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.cancelButton:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Delete — red/danger */
+.deleteButton {
+  border-radius: var(--radius-md);
+  padding: 6px 18px;
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(145deg, #fca5a5, #ef4444);
+  border: 2px solid #dc2626;
+  color: #450a0a;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: all var(--transition);
+}
+
+.deleteButton:hover {
+  background: linear-gradient(145deg, #fecaca, #f87171);
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 16px rgba(239,68,68,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.deleteButton:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+.gwt-Button {
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  font-size: var(--font-size-base);
+  font-family: 'Nunito', inherit;
+  cursor: pointer;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--color-text-primary);
+  transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.gwt-Button:hover {
+  background: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+}
+
+.gwt-Button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.createRoomButton {
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  padding: 6px 16px;
+  background: linear-gradient(145deg, #fdba74, #f97316);
+  border: 2px solid #ea580c;
+  color: #431407;
+  cursor: pointer;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+  transition: all var(--transition);
+  text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+}
+
+.createRoomButton:hover {
+  background: linear-gradient(145deg, #fed7aa, #fb923c);
+  transform: translateY(-1px);
+  box-shadow: 3px 5px 16px rgba(249,115,22,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+.createRoomButton:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+}
+
+.joinRoomButton {
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', inherit;
+  padding: 4px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  background: linear-gradient(145deg, #fdba74, #f97316);
+  border: 2px solid #ea580c;
+  color: #431407;
+  cursor: pointer;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+  transition: all var(--transition);
+}
+
+.joinRoomButton:hover {
+  background: linear-gradient(145deg, #fed7aa, #fb923c);
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 14px rgba(249,115,22,0.5);
+}
+
+.joinRoomButton:active {
+  transform: translateY(1px);
 }
 
 .sendButton {
   display: block;
-  font-size: 16pt;
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
   height: 40px;
+  padding: 0 16px;
+  background: linear-gradient(145deg, #fdba74, #f97316);
+  border: 2px solid #ea580c;
+  border-radius: var(--radius-md);
+  color: #431407;
+  cursor: pointer;
+  box-shadow: 2px 3px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+  transition: all var(--transition);
 }
 
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
+.sendButton:hover {
+  background: linear-gradient(145deg, #fed7aa, #fb923c);
+  transform: translateY(-1px);
+  box-shadow: 2px 4px 14px rgba(249,115,22,0.5);
 }
 
-.dialogVPanel {
-  margin: 5px;
+/* =============================================
+   Form Inputs
+   ============================================= */
+.textField {
+  margin-left: 10px;
+  margin-right: 8px;
 }
 
-.serverResponseLabelError {
-  color: red;
+.gwt-TextBox,
+.gwt-TextArea,
+.gwt-ListBox {
+  font-family: 'Nunito', inherit;
+  font-size: var(--font-size-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-input);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
 }
 
-/** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
+.gwt-TextBox:focus,
+.gwt-TextArea:focus,
+.gwt-ListBox:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-glow);
 }
 
-/* Profile Picture Grid */
+/* =============================================
+   Chat Area
+   ============================================= */
+.MessageDisplayField {
+  overflow-y: scroll;
+  font-size: var(--font-size-base);
+  font-family: 'Nunito', inherit;
+  color: var(--color-text-primary);
+  background-color: rgba(0,0,0,0.35);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  margin: 8px 10px;
+  width: 460px;
+  height: 200px;
+  resize: none;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.MessageInputField {
+  font-size: var(--font-size-base);
+  font-family: 'Nunito', inherit;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+  margin-left: 10px;
+  margin-right: 8px;
+  margin-bottom: 10px;
+  width: 390px;
+  height: 22px;
+  resize: none;
+  background-color: var(--color-bg-input);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.MessageInputField:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-glow);
+}
+
+/* =============================================
+   Profile Pictures
+   ============================================= */
 .profile-pic-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.03);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
 }
 
-/* Profile Picture Images */
 .profile-pic {
-  width: 100px;/* width and height does not work*/
+  width: 100px;
   height: 100px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.profile-pic-small {
-  width: 50px; /* width and height does not work*/
-  height: 50px;
-  border: 2px solid #ddd;
-  border-radius: 8px;
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  background-color: rgba(0,0,0,0.3);
 }
 
 .profile-pic:hover {
-  transform: scale(1.1);
-  border-color: #4CAF50;
+  transform: scale(1.08);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.45);
 }
 
 .profile-pic-selected {
-  border-color: #4CAF50;
-  box-shadow: 0 0 10px #4CAF50;
-  transform: scale(1.1);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow), var(--shadow-md);
+  transform: scale(1.08);
 }
 
-.gwt-Button{
-  border-radius: 3px;
+.profile-pic-small {
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(139, 92, 246, 0.4);
+  border-radius: var(--radius-md);
+  background-color: rgba(0,0,0,0.3);
 }
 
-.createRoomButton{
-  border-radius: 10px;
-  font-size: 10pt;
-  background-color: #b5e48c;
-}
-
-.joinRoomButton{
-  background-color: #b5e48c;
-  border-radius: 8px;
-}
-
-.textField{
-  margin-left: 20px;
-  margin-right: 5px;
-}
-.boldText{
-  font-weight: bolder;
-  font-size: 16pt;
-}
-
-.MessageDisplayField{
-  overflow-y: scroll;
-  font-size: 14px;
-  color: #333;
-  background-color: #f9f9f9;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  margin: 10px;
-  width: 500px;
-  height: 200px;
-  resize: none;
-}
-
-.MessageInputField{
-  font-size: 14px;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  width: 500px;
-  height: 20px;
-  resize: none;
-}
-
-/* to display a <hr>, but this cannot be placed into a HTML element in the ui.xml */
+/* =============================================
+   Divider
+   ============================================= */
 .custom-hr {
   border: 0;
   height: 1px;
-  background-color: #ccc;
-  margin: 10px 0;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), rgba(251, 146, 60, 0.5), transparent);
+  margin: 12px 0;
   width: 100%;
 }
 
-.gameArea{
-  color: #4CAF50;
-  background-color: orange;
-  width: 800px;
-  height: 800px;
-}
-
-.bottom-aligned{
-  position:absolute;
-  bottom:0;
+/* =============================================
+   Room Panel Layout Helper
+   ============================================= */
+.bottom-aligned {
+  position: absolute;
+  bottom: 0;
   margin-bottom: 75px;
 }
 
-.lobbyMainPanel{
-  display: flex;
-  justify-content: center;
-  height: 97vh;
-  width: 100%;
-  box-sizing: border-box;
-  background-color: #fae5aa;
-  border-color: #4CAF50;
-  border-radius: 20px;
+/* =============================================
+   GWT Dialog
+   ============================================= */
+.gwt-DialogBox {
+  width: 400px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  background: #1a1035;
 }
 
-.characterPanel{
+.dialogVPanel {
+  margin: 12px;
+}
+
+#closeButton {
+  margin: 15px 6px 6px;
+}
+
+/* =============================================
+   Room Table (custom flex layout)
+   ============================================= */
+.room-table-container {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 0 1px rgba(139, 92, 246, 0.25);
+}
+
+.room-table-header,
+.room-table-row {
   display: flex;
-  justify-content: center;
-  height: 97vh;
+  align-items: center;
   width: 100%;
   box-sizing: border-box;
-  background-color: #dcffc6;
-  border-color: #4CAF50;
-  border-radius: 20px;
 }
+
+.room-table-header {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  border-bottom: 2px solid #ea580c;
+}
+
+.room-table-row {
+  background-color: rgba(15, 8, 32, 0.85);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+  transition: background var(--transition), border-left var(--transition);
+}
+
+.room-table-row:nth-child(even) {
+  background-color: rgba(139, 92, 246, 0.06);
+}
+
+.room-table-row:hover {
+  background-color: rgba(139, 92, 246, 0.18);
+  border-left: 3px solid var(--color-accent);
+}
+
+.room-table-row:last-child {
+  border-bottom: none;
+}
+
+.room-table-header-cell {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #1a0800;
+  padding: 12px 16px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.room-table-cell {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  padding: 10px 16px;
+}
+
+.room-cell-name    { flex: 2; }
+.room-cell-players { flex: 1; }
+.room-cell-status  { flex: 1; }
+.room-cell-action  { flex: 1; text-align: right; padding-right: 12px; }
+
+/* Status badges */
+.status-waiting { color: #86efac; }
+.status-playing { color: #fbbf24; }
+.status-full    { color: #f87171; }

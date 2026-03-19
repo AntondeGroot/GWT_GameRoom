@@ -1,12 +1,8 @@
 package ADG.Lobby;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
@@ -18,97 +14,31 @@ public class LobbyView extends Composite {
     interface GameLobbyViewUiBinder extends UiBinder<Widget, LobbyView> {}
     private final static GameLobbyViewUiBinder uiBinder = GWT.create(GameLobbyViewUiBinder.class);
 
-    @UiField
-    VerticalPanel mainPanel;
+    @UiField VerticalPanel mainPanel;
+    @UiField HorizontalPanel createRoomPanel;
+    @UiField Label createRoomLabel;
+    @UiField TextBox roomNameInput;
+    @UiField Button createRoomButton;
+    @UiField Label availableRoomsHeader;
+    @UiField ListBox gameListBox;
+    @UiField FlowPanel roomTableContainer;
 
-    @UiField
-    HorizontalPanel createRoomPanel;
+    public interface JoinHandler {
+        void onJoin(Room room);
+    }
 
-    @UiField
-    Label createRoomLabel;
-
-    @UiField
-    TextBox roomNameInput;
-
-    @UiField
-    Button createRoomButton;
-
-    @UiField
-    Label availableRoomsHeader;
-
-    @UiField
-    ListBox gameListBox;
-
-    @UiField
-    CellTable<Room> roomTable;
+    private JoinHandler joinHandler;
 
     public LobbyView() {
-        // Call UiBinder to initialize the layout
         initWidget(uiBinder.createAndBindUi(this));
+        buildTableHeader();
     }
 
-    public Button getCreateRoomButton() {
-        return createRoomButton;
-    }
+    public Button getCreateRoomButton() { return createRoomButton; }
+    public TextBox getRoomNameInput() { return roomNameInput; }
 
-    public TextBox getRoomNameInput() {
-        return roomNameInput;
-    }
-
-    public CellTable<Room> getRoomTable() {
-        return roomTable;
-    }
-
-    public void initializeTableHeaders(){
-        // Add Room Name Column
-        TextColumn<Room> roomNameColumn = new TextColumn<Room>() {
-            @Override
-            public String getValue(Room room) {
-                return room.getName();
-            }
-        };
-
-        // Add Number of Players Column
-        TextColumn<Room> nrPlayersColumn = new TextColumn<Room>() {
-            @Override
-            public String getValue(Room room) {
-                return room.getNrOfPlayers() + " / 8";
-            }
-        };
-
-        // Add Status Column
-        TextColumn<Room> statusColumn = new TextColumn<Room>() {
-            @Override
-            public String getValue(Room room) {
-                switch (room.getStatus()) {
-                    case PLAYING:
-                        return "Playing";
-                    case WAITING:
-                        return "Waiting for players ...";
-                    case FULL:
-                        return "Full";
-                    default:
-                        return "";
-                }
-            }
-        };
-
-        // Add Join Button Column
-        ButtonCell joinButtonCell = new StyledButtonCell("joinRoomButton");
-        Column<Room, String> joinButtonColumn =
-                new Column<Room, String>(joinButtonCell) {
-                    @Override
-                    public String getValue(Room room) {
-                        return GameStatus.WAITING.equals(room.getStatus()) ? "Join" : null;
-                    }
-                };
-
-
-        // Add columns to the table
-        roomTable.addColumn(roomNameColumn, "Room Name");
-        roomTable.addColumn(nrPlayersColumn, "Players");
-        roomTable.addColumn(statusColumn, "Status");
-        roomTable.addColumn(joinButtonColumn, "");
+    public void setJoinHandler(JoinHandler handler) {
+        this.joinHandler = handler;
     }
 
     public void populateGameList(ArrayList<GameDefinition> games) {
@@ -123,12 +53,82 @@ public class LobbyView extends Composite {
         return index >= 0 ? gameListBox.getValue(index) : null;
     }
 
-    public void showAlert(String msg){
+    public void showAlert(String msg) {
         Window.alert(msg);
     }
 
     public void updateRoomTable(List<Room> rooms) {
-        roomTable.setRowData(0, rooms);
-        roomTable.setRowCount(rooms.size());
+        // Keep header row (index 0), remove the rest
+        while (roomTableContainer.getWidgetCount() > 1) {
+            roomTableContainer.remove(1);
+        }
+        for (Room room : rooms) {
+            roomTableContainer.add(buildRow(room));
+        }
+    }
+
+    private void buildTableHeader() {
+        FlowPanel header = new FlowPanel();
+        header.setStyleName("room-table-header");
+        header.add(makeHeaderCell("Room Name", "room-cell-name"));
+        header.add(makeHeaderCell("Players", "room-cell-players"));
+        header.add(makeHeaderCell("Status", "room-cell-status"));
+        header.add(makeHeaderCell("", "room-cell-action"));
+        roomTableContainer.add(header);
+    }
+
+    private FlowPanel buildRow(Room room) {
+        FlowPanel row = new FlowPanel();
+        row.setStyleName("room-table-row");
+
+        Label nameLabel = new Label(room.getName());
+        nameLabel.setStyleName("room-table-cell room-cell-name");
+        row.add(nameLabel);
+
+        Label playersLabel = new Label(room.getNrOfPlayers() + " / 8");
+        playersLabel.setStyleName("room-table-cell room-cell-players");
+        row.add(playersLabel);
+
+        Label statusLabel = new Label(getStatusText(room.getStatus()));
+        statusLabel.setStyleName("room-table-cell room-cell-status " + getStatusClass(room.getStatus()));
+        row.add(statusLabel);
+
+        FlowPanel actionCell = new FlowPanel();
+        actionCell.setStyleName("room-table-cell room-cell-action");
+        if (GameStatus.WAITING.equals(room.getStatus())) {
+            Button joinBtn = new Button("Join");
+            joinBtn.setStylePrimaryName("joinRoomButton");
+            joinBtn.addClickHandler(e -> {
+                if (joinHandler != null) joinHandler.onJoin(room);
+            });
+            actionCell.add(joinBtn);
+        }
+        row.add(actionCell);
+
+        return row;
+    }
+
+    private Label makeHeaderCell(String text, String extraStyle) {
+        Label label = new Label(text);
+        label.setStyleName("room-table-header-cell " + extraStyle);
+        return label;
+    }
+
+    private String getStatusText(GameStatus status) {
+        switch (status) {
+            case PLAYING: return "Playing";
+            case WAITING: return "Waiting...";
+            case FULL:    return "Full";
+            default:      return "";
+        }
+    }
+
+    private String getStatusClass(GameStatus status) {
+        switch (status) {
+            case PLAYING: return "status-playing";
+            case WAITING: return "status-waiting";
+            case FULL:    return "status-full";
+            default:      return "";
+        }
     }
 }
