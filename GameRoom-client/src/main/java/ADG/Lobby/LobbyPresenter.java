@@ -21,7 +21,6 @@ public class LobbyPresenter implements Presenter {
     @Override
     public void start() {
         History.newItem("");
-        bind();
         loadAvailableGames();
         pollingService.startPolling(POLLING_INTERVAL_MS, this::pollServerForRooms);
     }
@@ -35,6 +34,7 @@ public class LobbyPresenter implements Presenter {
         this.view = view;
         this.presenterManager = presenterManager;
         this.roomService = roomService;
+        bind();
     }
 
     private void bind() {
