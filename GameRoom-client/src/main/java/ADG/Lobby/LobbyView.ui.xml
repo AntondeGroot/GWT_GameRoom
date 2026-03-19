@@ -6,14 +6,23 @@
             <g:HTML>
                 <h1>Game Lobby</h1>
             </g:HTML>
-            <g:HorizontalPanel ui:field="createRoomPanel">
-                <g:Label ui:field="createRoomLabel" text="Room Name:" styleName="boldText" />
-                <g:TextBox ui:field="roomNameInput" styleName="textField" />
-                <g:Label text="Game:" styleName="boldText" />
-                <g:ListBox ui:field="gameListBox" />
-                <g:Button ui:field="createRoomButton" text="Create Room" stylePrimaryName="createRoomButton" />
-            </g:HorizontalPanel>
-            <g:Label ui:field="availableRoomsHeader" text="Available Rooms:" styleName="boldText" />
+            <g:FlowPanel ui:field="createRoomPanel" styleName="create-room-card">
+                <g:HTML><h2 class="section-title">Create a Room</h2></g:HTML>
+                <g:FlowPanel styleName="create-room-fields">
+                    <g:FlowPanel styleName="create-room-field">
+                        <g:Label text="Room Name" styleName="create-room-label"/>
+                        <g:TextBox ui:field="roomNameInput" styleName="create-room-input"/>
+                    </g:FlowPanel>
+                    <g:FlowPanel styleName="create-room-field">
+                        <g:Label text="Select Game" styleName="create-room-label"/>
+                        <g:ListBox ui:field="gameListBox" styleName="create-room-select"/>
+                    </g:FlowPanel>
+                </g:FlowPanel>
+                <g:FlowPanel styleName="create-room-actions">
+                    <g:Button ui:field="createRoomButton" text="Create Room" stylePrimaryName="createRoomButton"/>
+                </g:FlowPanel>
+            </g:FlowPanel>
+            <g:Label ui:field="availableRoomsHeader" text="Available Rooms" styleName="section-title"/>
             <g:FlowPanel ui:field="roomTableContainer" styleName="room-table-container"/>
         </g:VerticalPanel>
     </g:HTMLPanel>

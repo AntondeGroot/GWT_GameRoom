@@ -124,6 +124,82 @@ td, th, span, p, div, label {
 }
 
 /* =============================================
+   Section Title
+   ============================================= */
+.section-title {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 16px 0;
+  padding: 0;
+}
+
+/* =============================================
+   Create Room Card
+   ============================================= */
+.create-room-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(15, 8, 32, 0.7) 100%);
+  border: 2px solid rgba(139, 92, 246, 0.7);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12), 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.create-room-fields {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.create-room-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.create-room-label {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.create-room-input,
+.create-room-select {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.create-room-input:focus,
+.create-room-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-glow);
+}
+
+.create-room-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* =============================================
    Buttons
    ============================================= */
 /* Confirm / primary action — orange */
