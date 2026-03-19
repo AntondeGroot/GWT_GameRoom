@@ -41,6 +41,9 @@ public class RoomView extends Composite {
     Button sendMessageButton;
 
     @UiField
+    Label startInfoLabel;
+
+    @UiField
     TextArea messageDisplayField;
 
     @UiField
@@ -117,21 +120,31 @@ public class RoomView extends Composite {
 
         return canvas;
     }
-    public void updateCreatorControls(Room room){
-        startGameButton.setEnabled(displayButtonForCreatorOfRoom(room));
-        startGameButton.setVisible(displayButtonForCreatorOfRoom(room));
-        deleteRoomButton.setEnabled(displayButtonForCreatorOfRoom(room));
-        deleteRoomButton.setVisible(displayButtonForCreatorOfRoom(room));
-    }
+    public void updateCreatorControls(Room room) {
+        boolean isCreator = room.getCreatedByUserId().equals(Cookie.getPlayerId())
+                && room.getStatus() != GameStatus.PLAYING;
+        boolean enoughPlayers = room.getPlayerNames().size() >= room.getMinPlayers();
 
-    private boolean displayButtonForCreatorOfRoom(Room room){
-        if(!room.getCreatedByUserId().equals(Cookie.getPlayerId())){
-            return false;
+        startGameButton.setVisible(isCreator);
+        startGameButton.setEnabled(isCreator && enoughPlayers);
+
+        if (isCreator) {
+            if (!enoughPlayers) {
+                int missing = room.getMinPlayers() - room.getPlayerNames().size();
+                startInfoLabel.setText("Waiting for " + missing + " more player" + (missing == 1 ? "" : "s") + " to join.");
+                startInfoLabel.setStyleName("startInfoLabel startInfoLabel-waiting");
+            } else {
+                startInfoLabel.setText("");
+            }
+        } else {
+            String creatorName = room.getPlayerNames().get(room.getCreatedByUserId());
+            if (creatorName == null) creatorName = "the host";
+            startInfoLabel.setText(creatorName + " will start the game.");
+            startInfoLabel.setStyleName("startInfoLabel startInfoLabel-waiting");
         }
-        if(room.getStatus() == GameStatus.PLAYING){
-            return false;
-        }
-        return true;
+
+        deleteRoomButton.setEnabled(isCreator);
+        deleteRoomButton.setVisible(isCreator);
     }
 
     public void refreshMessages(ArrayList<Message> messages){

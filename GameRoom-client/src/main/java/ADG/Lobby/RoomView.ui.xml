@@ -9,11 +9,11 @@
         <g:VerticalPanel ui:field="playerPanel"/>
         <g:VerticalPanel ui:field="roomPanel" styleName="full-height">
             <g:VerticalPanel styleName="bottom-aligned">
-                <g:HorizontalPanel>
+                <g:HorizontalPanel styleName="startRowPanel">
                     <g:Button ui:field="startGameButton" text="Start Game" visible="false" stylePrimaryName="confirmButton"/>
                     <g:Button ui:field="leaveRoomButton" text="Leave Room" stylePrimaryName="cancelButton"/>
                     <g:Button ui:field="deleteRoomButton" text="Delete Room" visible="false" stylePrimaryName="deleteButton"/>
-                </g:HorizontalPanel>
+                    <g:Label ui:field="startInfoLabel" styleName="startInfoLabel"/></g:HorizontalPanel>
                 <g:SimplePanel styleName="custom-hr" />
                 <g:TextArea ui:field="messageDisplayField" styleName="MessageDisplayField" enabled="false"/>
                 <g:HorizontalPanel>

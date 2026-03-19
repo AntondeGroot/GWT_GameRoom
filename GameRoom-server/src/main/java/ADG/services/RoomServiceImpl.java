@@ -49,6 +49,8 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
             throw new IllegalArgumentException();
         }
 
+        gamesConfig.findById(room.getGameId())
+                .ifPresent(game -> room.setMinPlayers(game.getMinPlayers()));
         rooms.add(room);
         return room;
     }
@@ -86,6 +88,10 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.removePlayer(playerId);
+                if (playerId.equals(room1.getCreatedByUserId()) && !room1.getPlayerIds().isEmpty()) {
+                    String newCreator = room1.getPlayerIds().get(0);
+                    room1.setCreatedByUserId(newCreator);
+                }
             }
         }
     }
@@ -109,6 +115,13 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                         .orElseThrow(() -> new IllegalArgumentException("Unknown game: " + room1.getGameId()));
 
                 String baseUrl = game.getBaseUrl();
+
+                // 0. Enforce minimum players
+                if (room1.getPlayerNames().size() < game.getMinPlayers()) {
+                    throw new IllegalArgumentException(
+                            "Not enough players. Need at least " + game.getMinPlayers()
+                            + ", but only " + room1.getPlayerNames().size() + " have joined.");
+                }
 
                 // 1. Create a game session
                 Map<String, Object> newGameRequest = new HashMap<>();

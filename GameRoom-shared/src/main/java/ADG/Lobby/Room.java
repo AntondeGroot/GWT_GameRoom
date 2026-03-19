@@ -18,6 +18,7 @@ public class Room implements IsSerializable {
     private String gameSessionId;
     private String gameBaseUrl;
     private String gameId;
+    private int minPlayers = 1;
 
     public Room() {} // Default constructor
 
@@ -114,6 +115,14 @@ public class Room implements IsSerializable {
 
     public void setGameId(String gameId) {
         this.gameId = gameId;
+    }
+
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
     }
 
     @Override

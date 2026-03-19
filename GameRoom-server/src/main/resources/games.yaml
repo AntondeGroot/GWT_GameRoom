@@ -1,7 +1,7 @@
 games:
   available:
     - id: keezen
-      name: Keezenspel
+      name: Keezen
       baseUrl: http://localhost:4200
       minPlayers: 2
-      maxPlayers: 6
+      maxPlayers: 8

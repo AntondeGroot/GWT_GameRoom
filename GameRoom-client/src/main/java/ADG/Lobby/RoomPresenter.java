@@ -150,6 +150,7 @@ public class RoomPresenter implements Presenter {
                     userProfiles = serverUserProfiles;
                     roomView.refreshPlayerList(userNames, userProfiles);
                 }
+                roomView.updateCreatorControls(updatedRoom);
             }
         });
     }
