@@ -40,8 +40,12 @@ public class LobbyPresenter implements Presenter {
     private void bind() {
         view.getCreateRoomButton().addClickHandler(event -> {
             String roomName = view.getRoomNameInput().getText().trim();
-            if (!isRoomNameValid(roomName)) {
+            if (roomName.isEmpty()) {
                 view.showAlert("Room name cannot be empty.");
+                return;
+            }
+            if (roomName.length() > 20) {
+                view.showAlert("Room name cannot exceed 20 characters.");
                 return;
             }
             createRoom(roomName);
@@ -97,7 +101,7 @@ public class LobbyPresenter implements Presenter {
     }
 
     private boolean isRoomNameValid(String roomName) {
-        return roomName != null && !roomName.trim().isEmpty();
+        return roomName != null && !roomName.trim().isEmpty() && roomName.trim().length() <= 20;
     }
 
     private void loadAvailableGames() {

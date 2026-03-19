@@ -27,6 +27,7 @@ public class LobbyView extends Composite {
     }
 
     private JoinHandler joinHandler;
+    private ArrayList<GameDefinition> gameDefinitions = new ArrayList<>();
 
     public LobbyView() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -41,10 +42,18 @@ public class LobbyView extends Composite {
     }
 
     public void populateGameList(ArrayList<GameDefinition> games) {
+        gameDefinitions = games;
         gameListBox.clear();
         for (GameDefinition game : games) {
             gameListBox.addItem(game.getName(), game.getId());
         }
+    }
+
+    private String getGameName(String gameId) {
+        for (GameDefinition def : gameDefinitions) {
+            if (def.getId().equals(gameId)) return def.getName();
+        }
+        return gameId;
     }
 
     public String getSelectedGameId() {
@@ -70,6 +79,7 @@ public class LobbyView extends Composite {
         FlowPanel header = new FlowPanel();
         header.setStyleName("room-table-header");
         header.add(makeHeaderCell("Room Name", "room-cell-name"));
+        header.add(makeHeaderCell("Game", "room-cell-game"));
         header.add(makeHeaderCell("Players", "room-cell-players"));
         header.add(makeHeaderCell("Status", "room-cell-status"));
         header.add(makeHeaderCell("", "room-cell-action"));
@@ -83,6 +93,10 @@ public class LobbyView extends Composite {
         Label nameLabel = new Label(room.getName());
         nameLabel.setStyleName("room-table-cell room-cell-name");
         row.add(nameLabel);
+
+        Label gameLabel = new Label(getGameName(room.getGameId()));
+        gameLabel.setStyleName("room-table-cell room-cell-game");
+        row.add(gameLabel);
 
         Label playersLabel = new Label(room.getNrOfPlayers() + " / 8");
         playersLabel.setStyleName("room-table-cell room-cell-players");

@@ -581,6 +581,7 @@ td, th, span, p, div, label {
   color: #1a0800;
   padding: 12px 16px;
   text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+  white-space: nowrap;
 }
 
 .room-table-cell {
@@ -588,12 +589,17 @@ td, th, span, p, div, label {
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
   padding: 10px 16px;
+  white-space: nowrap;
 }
 
-.room-cell-name    { flex: 2; }
-.room-cell-players { flex: 1; }
-.room-cell-status  { flex: 1; }
-.room-cell-action  { flex: 1; text-align: right; padding-right: 12px; }
+.room-cell-name    { flex: 0 0 200px; overflow: hidden; text-overflow: ellipsis; }
+.room-cell-game    { flex: 0 0 140px; }
+.room-cell-players { flex: 0 0 90px; }
+.room-cell-status  { flex: 0 0 130px; }
+.room-cell-action  { flex: 0 0 90px; display: flex; justify-content: flex-end; padding-right: 12px; }
+
+/* muted/italic only on data rows, not the header */
+.room-table-row .room-cell-game { color: var(--color-text-muted); font-style: italic; }
 
 /* Status badges */
 .status-waiting { color: #86efac; }
