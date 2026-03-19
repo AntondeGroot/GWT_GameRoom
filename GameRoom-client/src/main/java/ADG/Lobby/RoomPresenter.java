@@ -1,23 +1,25 @@
 package ADG.Lobby;
 
 import ADG.*;
+import ADG.Utils.ChatCipher;
 import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.*;
+import com.google.gwt.json.client.*;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static ADG.Utils.TimeUtils.getCurrentTime;
-
 public class RoomPresenter implements Presenter {
 
+    private static final String CHAT_BASE_URL = "http://localhost:4100";
+
     private final RoomServiceAsync roomService;
-    private final MessageServiceAsync messageService;
     private final RoomView roomView;
-    private ArrayList<Message> storedMessages = new ArrayList<>();
+    private int chatMessageCount = 0;
     private final Room room;
     private final PresenterManager presenterManager;
     private HashMap<String, String> userNames = new HashMap<>();
@@ -29,7 +31,6 @@ public class RoomPresenter implements Presenter {
         this.room = model;
         this.presenterManager = presenterManager;
         this.roomService = roomService;
-        this.messageService = messageService;
     }
 
     @Override
@@ -67,17 +68,23 @@ public class RoomPresenter implements Presenter {
         });
     }
 
-    private void sendMessageToServer(String inputText){
-        Message message = new Message(getCurrentTime(), userNames.get(Cookie.getPlayerId()), inputText);
-        messageService.sendMessage(room.getId(), message, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-            }
-
-            @Override
-            public void onSuccess(Void v) {
-            }
-        });
+    private void sendMessageToServer(String inputText) {
+        String encrypted = ChatCipher.encrypt(inputText, room.getId());
+        String sender = userNames.getOrDefault(Cookie.getPlayerId(), "?");
+        JSONObject body = new JSONObject();
+        body.put("sender", new JSONString(sender));
+        body.put("message", new JSONString(encrypted));
+        try {
+            RequestBuilder rb = new RequestBuilder(RequestBuilder.POST,
+                    URL.encode(CHAT_BASE_URL + "/chat/" + room.getId()));
+            rb.setHeader("Content-Type", "application/json");
+            rb.sendRequest(body.toString(), new RequestCallback() {
+                @Override public void onResponseReceived(Request req, Response res) {}
+                @Override public void onError(Request req, Throwable ex) {}
+            });
+        } catch (RequestException e) {
+            GWT.log("chat send error: " + e.getMessage());
+        }
     }
 
     private void sendMessage() {
@@ -148,20 +155,36 @@ public class RoomPresenter implements Presenter {
     }
 
     public void pollServerForMessages() {
-        messageService.getMessages(room.getId(), new AsyncCallback<ArrayList<Message>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GWT.log(throwable.getMessage());
-            }
-
-            @Override
-            public void onSuccess(ArrayList<Message> fetchedMessages) {
-                if(!fetchedMessages.equals(storedMessages)){
-                    storedMessages = fetchedMessages;
-                    roomView.refreshMessages(fetchedMessages);
+        try {
+            RequestBuilder rb = new RequestBuilder(RequestBuilder.GET,
+                    URL.encode(CHAT_BASE_URL + "/chat/" + room.getId()));
+            rb.setHeader("Accept", "application/json");
+            rb.sendRequest(null, new RequestCallback() {
+                @Override
+                public void onResponseReceived(Request req, Response res) {
+                    if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) return;
+                    JSONArray arr = JSONParser.parseStrict(res.getText()).isArray();
+                    if (arr == null || arr.size() == chatMessageCount) return;
+                    chatMessageCount = arr.size();
+                    ArrayList<Message> decrypted = new ArrayList<>();
+                    for (int i = 0; i < arr.size(); i++) {
+                        JSONObject m = arr.get(i).isObject();
+                        if (m == null) continue;
+                        String timestamp = m.get("timestamp").isString().stringValue();
+                        String sender    = m.get("sender").isString().stringValue();
+                        String encrypted = m.get("message").isString().stringValue();
+                        decrypted.add(new Message(timestamp, sender,
+                                ChatCipher.decrypt(encrypted, room.getId())));
+                    }
+                    roomView.refreshMessages(decrypted);
                 }
-            }
-        });
+                @Override public void onError(Request req, Throwable ex) {
+                    GWT.log("chat poll error: " + ex.getMessage());
+                }
+            });
+        } catch (RequestException e) {
+            GWT.log("chat poll error: " + e.getMessage());
+        }
     }
 
     private void removePlayerFromRoom() {
