@@ -15,8 +15,7 @@ public class LobbyView extends Composite {
     private final static GameLobbyViewUiBinder uiBinder = GWT.create(GameLobbyViewUiBinder.class);
 
     @UiField VerticalPanel mainPanel;
-    @UiField HorizontalPanel createRoomPanel;
-    @UiField Label createRoomLabel;
+    @UiField FlowPanel createRoomPanel;
     @UiField TextBox roomNameInput;
     @UiField Button createRoomButton;
     @UiField Label availableRoomsHeader;
