@@ -37,6 +37,7 @@ public class CharacterSelectionPresenter implements Presenter {
     }
 
     private void loadProfilePictures() {
+        view.getProfilePicGrid().clear();
         for (String picUrl : profilePicUrls) {
             Image profilePic = new Image(picUrl);
             profilePic.setStyleName("profile-pic");

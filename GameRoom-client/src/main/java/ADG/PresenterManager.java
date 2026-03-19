@@ -20,9 +20,7 @@ public class PresenterManager {
     private final MessageServiceAsync messageServiceAsync = GWT.create(MessageService.class);
 
     public void switchToGameRoom(Room room) {
-        if (roomPresenter == null) {
-            roomPresenter = new RoomPresenter(roomView, room, this, roomServiceAsync, messageServiceAsync);
-        }
+        roomPresenter = new RoomPresenter(roomView, room, this, roomServiceAsync, messageServiceAsync);
         switchPresenter(roomPresenter, roomView);
     }
 
@@ -34,9 +32,7 @@ public class PresenterManager {
     }
 
     public void switchToCharacterSelection(Room room){
-        if(characterSelectionPresenter == null) {
-            characterSelectionPresenter = new CharacterSelectionPresenter(characterSelectionView, room, this, roomServiceAsync);
-        }
+        characterSelectionPresenter = new CharacterSelectionPresenter(characterSelectionView, room, this, roomServiceAsync);
         switchPresenter(characterSelectionPresenter, characterSelectionView);
     }
 
