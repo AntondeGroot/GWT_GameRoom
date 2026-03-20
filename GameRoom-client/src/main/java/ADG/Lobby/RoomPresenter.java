@@ -48,6 +48,8 @@ public class RoomPresenter implements Presenter {
     
     private void bind(){
         roomView.showRoomName(room.getName());
+        roomView.refreshPlayerList(new HashMap<>(), new HashMap<>());
+        roomView.refreshMessages(new ArrayList<>());
         roomView.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
         roomView.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
         roomView.getStartGameButton().addClickHandler(event -> startGame());

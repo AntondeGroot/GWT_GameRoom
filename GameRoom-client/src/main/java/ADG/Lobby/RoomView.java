@@ -325,8 +325,19 @@ public class RoomView extends Composite {
             output.append(" ").append(message.getNameSender()).append(" : ").append(message.getMessage());
             output.append("\n");
         }
+        Element el = messageDisplayField.getElement();
+        boolean atBottom = isScrolledToBottom(el);
         messageDisplayField.setText(output.toString());
+        if (atBottom) scrollToBottom(el);
     }
+
+    private native boolean isScrolledToBottom(Element el) /*-{
+        return el.scrollHeight - el.scrollTop - el.clientHeight < 6;
+    }-*/;
+
+    private native void scrollToBottom(Element el) /*-{
+        el.scrollTop = el.scrollHeight;
+    }-*/;
 
     public void showRoomName(String roomName) {
         roomTitle.setInnerText("Room : " + roomName);
