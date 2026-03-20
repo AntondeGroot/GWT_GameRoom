@@ -78,12 +78,17 @@ public class LobbyPresenter implements Presenter {
         });
     }
 
+    private void navigateToGameOptions(Room room) {
+        addPlayerIdToRoom(room);
+        presenterManager.switchToGameOptions(room);
+    }
+
     /**
      * Navigate to the selected room.
      */
     private void navigateToCharacterSelection(Room room) {
-        presenterManager.switchToCharacterSelection(room);
         addPlayerIdToRoom(room);
+        presenterManager.switchToCharacterSelection(room);
     }
 
     private void addPlayerIdToRoom(Room room){
@@ -135,7 +140,7 @@ public class LobbyPresenter implements Presenter {
 
             @Override
             public void onSuccess(Room result) {
-                navigateToCharacterSelection(room);
+                navigateToGameOptions(room);
                 view.getRoomNameInput().setText("");
             }
         });

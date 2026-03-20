@@ -5,6 +5,7 @@ import ADG.Utils.ChatCipher;
 import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.*;
 import com.google.gwt.json.client.*;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class RoomPresenter implements Presenter {
 
@@ -26,6 +28,7 @@ public class RoomPresenter implements Presenter {
     private HashMap<String, String> userNames = new HashMap<>();
     private HashMap<String, String> userProfiles = new HashMap<>();
     private final PollingService pollingService = new PollingService();
+    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
     public RoomPresenter(RoomView roomView, Room model, PresenterManager presenterManager, RoomServiceAsync roomService, MessageServiceAsync messageService) {
         this.roomView = roomView;
@@ -44,22 +47,23 @@ public class RoomPresenter implements Presenter {
     @Override
     public void stop() {
         pollingService.stopPolling();
+        for (HandlerRegistration reg : handlerRegistrations) reg.removeHandler();
+        handlerRegistrations.clear();
     }
-    
+
     private void bind(){
         roomView.showRoomName(room.getName());
         roomView.refreshPlayerList(new HashMap<>(), new HashMap<>());
         roomView.refreshMessages(new ArrayList<>());
-        roomView.getLeaveRoomButton().addClickHandler(event -> leaveRoom());
-        roomView.getDeleteRoomButton().addClickHandler(event -> deleteRoom());
-        roomView.getStartGameButton().addClickHandler(event -> startGame());
-        roomView.getSendMessageButton().addClickHandler(event -> sendMessage());
-        roomView.getMessageInputField().addKeyDownHandler(event -> {
+        handlerRegistrations.add(roomView.getLeaveRoomButton().addClickHandler(event -> leaveRoom()));
+        handlerRegistrations.add(roomView.getDeleteRoomButton().addClickHandler(event -> deleteRoom()));
+        handlerRegistrations.add(roomView.getStartGameButton().addClickHandler(event -> startGame()));
+        handlerRegistrations.add(roomView.getSendMessageButton().addClickHandler(event -> sendMessage()));
+        handlerRegistrations.add(roomView.getMessageInputField().addKeyDownHandler(event -> {
             if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
                 sendMessage();
             }
-        });
-
+        }));
         roomView.updateCreatorControls(room);
     }
 

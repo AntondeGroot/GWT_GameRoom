@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui">
+    <g:VerticalPanel styleName="characterPanel">
+        <g:HTML><h1>Game Options</h1></g:HTML>
+        <g:FlowPanel styleName="game-options-card">
+            <g:HTML><h2 class="section-title">Room Settings</h2></g:HTML>
+            <g:FlowPanel styleName="game-options-field">
+                <g:CheckBox ui:field="uniqueProfilePicsCheckbox"
+                            text="Unique profile pictures"
+                            styleName="game-options-checkbox"/>
+            </g:FlowPanel>
+        </g:FlowPanel>
+        <g:HorizontalPanel styleName="game-options-actions">
+            <g:Button ui:field="confirmButton" text="Continue" stylePrimaryName="confirmButton"/>
+            <g:Button ui:field="cancelButton" text="Cancel" stylePrimaryName="cancelButton"/>
+        </g:HorizontalPanel>
+    </g:VerticalPanel>
+</ui:UiBinder>

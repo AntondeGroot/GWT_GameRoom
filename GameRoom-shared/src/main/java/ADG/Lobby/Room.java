@@ -19,6 +19,7 @@ public class Room implements IsSerializable {
     private String gameBaseUrl;
     private String gameId;
     private int minPlayers = 1;
+    private boolean uniqueProfilePics = false;
 
     public Room() {} // Default constructor
 
@@ -123,6 +124,14 @@ public class Room implements IsSerializable {
 
     public void setMinPlayers(int minPlayers) {
         this.minPlayers = minPlayers;
+    }
+
+    public boolean isUniqueProfilePics() {
+        return uniqueProfilePics;
+    }
+
+    public void setUniqueProfilePics(boolean uniqueProfilePics) {
+        this.uniqueProfilePics = uniqueProfilePics;
     }
 
     @Override

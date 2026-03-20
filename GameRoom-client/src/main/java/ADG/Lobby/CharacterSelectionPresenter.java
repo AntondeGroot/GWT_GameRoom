@@ -3,11 +3,15 @@ package ADG.Lobby;
 import ADG.*;
 import ADG.Utils.Cookie;
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CharacterSelectionPresenter implements Presenter {
 
@@ -21,19 +25,27 @@ public class CharacterSelectionPresenter implements Presenter {
     private final Room room;
     private final PresenterManager presenterManager;
     private int selectedProfileIndex = -1;
+    private HandlerRegistration confirmReg;
+    private HandlerRegistration cancelReg;
 
     public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, RoomServiceAsync roomService) {
         this.view = view;
         this.room = room;
         this.presenterManager = presenterManager;
         this.roomService = roomService;
-        bind();
+    }
+
+    @Override
+    public void start() {
+        confirmReg = view.getConfirmButton().addClickHandler(event -> onConfirm());
+        cancelReg  = view.getCancelButton().addClickHandler(event -> onBackToLobby());
         loadProfilePictures();
     }
 
-    private void bind() {
-        view.getConfirmButton().addClickHandler(event -> onConfirm());
-        view.getCancelButton().addClickHandler(event -> onBackToLobby());
+    @Override
+    public void stop() {
+        if (confirmReg != null) { confirmReg.removeHandler(); confirmReg = null; }
+        if (cancelReg  != null) { cancelReg.removeHandler();  cancelReg  = null; }
     }
 
     private void loadProfilePictures() {
@@ -41,17 +53,27 @@ public class CharacterSelectionPresenter implements Presenter {
         selectedProfileIndex = -1;
         view.getSelectedProfileLabel().setText("No profile picture selected");
 
+        Set<Integer> takenIndices = new HashSet<>();
+        if (room.isUniqueProfilePics()) {
+            for (String profileId : room.getPlayerProfiles().values()) {
+                try { takenIndices.add(Integer.parseInt(profileId)); } catch (NumberFormatException ignored) {}
+            }
+        }
+
         Canvas[] canvases = new Canvas[SPRITE_SHEET_TOTAL];
         for (int i = 0; i < SPRITE_SHEET_TOTAL; i++) {
             if (isExcluded(i)) continue;
             final int spriteIndex = i;
+            final boolean taken = takenIndices.contains(i);
             Canvas canvas = Canvas.createIfSupported();
             canvas.setWidth(SPRITE_SIZE + "px");
             canvas.setHeight(SPRITE_SIZE + "px");
             canvas.setCoordinateSpaceWidth(SPRITE_SIZE);
             canvas.setCoordinateSpaceHeight(SPRITE_SIZE);
-            canvas.setStyleName("profile-pic");
-            canvas.addClickHandler(event -> onProfilePicSelected(spriteIndex, canvas));
+            canvas.setStyleName(taken ? "profile-pic profile-pic-taken" : "profile-pic");
+            if (!taken) {
+                canvas.addClickHandler(event -> onProfilePicSelected(spriteIndex, canvas));
+            }
             view.getProfilePicGrid().add(canvas);
             canvases[i] = canvas;
         }
@@ -67,7 +89,17 @@ public class CharacterSelectionPresenter implements Presenter {
                 if (isExcluded(i)) continue;
                 double sx = sw * (i % 4);
                 double sy = sh * (i / 4);
-                canvases[i].getContext2d().drawImage(imgEl, sx, sy, sw, sh, 0, 0, SPRITE_SIZE, SPRITE_SIZE);
+                Context2d ctx = canvases[i].getContext2d();
+                ctx.drawImage(imgEl, sx, sy, sw, sh, 0, 0, SPRITE_SIZE, SPRITE_SIZE);
+                if (takenIndices.contains(i)) {
+                    ctx.setFillStyle("rgba(10, 6, 20, 0.72)");
+                    ctx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
+                    ctx.setFillStyle("rgba(248, 113, 113, 0.9)");
+                    ctx.setFont("bold 32px sans-serif");
+                    ctx.setTextAlign("center");
+                    ctx.setTextBaseline("middle");
+                    ctx.fillText("\u2715", SPRITE_SIZE / 2.0, SPRITE_SIZE / 2.0);
+                }
             }
         });
         img.setUrl(SPRITE_SHEET_URL);
@@ -83,7 +115,6 @@ public class CharacterSelectionPresenter implements Presenter {
     private void onProfilePicSelected(int index, Canvas selectedCanvas) {
         selectedProfileIndex = index;
         view.getSelectedProfileLabel().setText("Profile " + (index + 1) + " selected");
-
         clearCanvasSelection();
         selectedCanvas.addStyleName("profile-pic-selected");
     }
@@ -106,14 +137,13 @@ public class CharacterSelectionPresenter implements Presenter {
             return;
         }
 
-        presenterManager.switchToGameRoom(room);
         roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
             @Override
-            public void onFailure(Throwable throwable) {
-            }
+            public void onFailure(Throwable throwable) {}
 
             @Override
             public void onSuccess(Void unused) {
+                presenterManager.switchToGameRoom(room);
             }
         });
     }
@@ -125,21 +155,8 @@ public class CharacterSelectionPresenter implements Presenter {
 
     private void removePlayerFromRoom() {
         roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-            }
-
-            @Override
-            public void onSuccess(Void v) {
-            }
+            @Override public void onFailure(Throwable throwable) {}
+            @Override public void onSuccess(Void v) {}
         });
-    }
-
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void stop() {
     }
 }

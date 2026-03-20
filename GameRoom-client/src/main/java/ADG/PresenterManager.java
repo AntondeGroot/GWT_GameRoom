@@ -10,10 +10,12 @@ public class PresenterManager {
     private final LobbyView lobbyView = new LobbyView();
     private final RoomView roomView = new RoomView();
     private final CharacterSelectionView characterSelectionView = new CharacterSelectionView();
+    private final GameOptionsView gameOptionsView = new GameOptionsView();
     // Presenters
     private LobbyPresenter lobbyPresenter;
     private RoomPresenter roomPresenter;
     private CharacterSelectionPresenter characterSelectionPresenter;
+    private GameOptionsPresenter gameOptionsPresenter;
     private Presenter currentPresenter;
     // Services
     private final RoomServiceAsync roomServiceAsync = GWT.create(RoomService.class);
@@ -29,6 +31,11 @@ public class PresenterManager {
             lobbyPresenter = new LobbyPresenter(lobbyView, this, roomServiceAsync);
         }
         switchPresenter(lobbyPresenter, lobbyView);
+    }
+
+    public void switchToGameOptions(Room room) {
+        gameOptionsPresenter = new GameOptionsPresenter(gameOptionsView, room, this, roomServiceAsync);
+        switchPresenter(gameOptionsPresenter, gameOptionsView);
     }
 
     public void switchToCharacterSelection(Room room){

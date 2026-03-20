@@ -210,6 +210,51 @@ td, th, span, p, div, label {
 }
 
 /* =============================================
+   Game Options View
+   ============================================= */
+.game-options-card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(15, 8, 32, 0.7) 100%);
+  border: 2px solid rgba(139, 92, 246, 0.7);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12), 0 4px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  width: 480px;
+  box-sizing: border-box;
+}
+
+.game-options-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.game-options-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 0;
+}
+
+.game-options-checkbox input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.game-options-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* =============================================
    Buttons
    ============================================= */
 /* Confirm / primary action — orange */
@@ -523,6 +568,13 @@ td, th, span, p, div, label {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-glow), var(--shadow-md);
   transform: scale(1.08);
+}
+
+.profile-pic-taken {
+  border-color: rgba(248, 113, 113, 0.4);
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.75;
 }
 
 .profile-pic-small {
