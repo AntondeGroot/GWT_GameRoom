@@ -525,6 +525,27 @@ td, th, span, p, div, label {
 }
 
 /* =============================================
+   Player Force Simulation
+   ============================================= */
+.playerSimulation {
+  width: 100%;
+  height: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.playerSimulation svg {
+  display: block;
+}
+
+@keyframes spin-dash {
+  to { stroke-dashoffset: -16; }
+}
+.node-spin-ring {
+  animation: spin-dash 4s linear infinite;
+}
+
+/* =============================================
    Room Panel Layout Helper
    ============================================= */
 .bottom-aligned {

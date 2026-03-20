@@ -6,6 +6,7 @@ import ADG.Lobby.Room;
 import ADG.Lobby.RoomService;
 import ADG.config.GamesConfig;
 import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.annotation.WebServlet;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,6 +26,36 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     private final RestTemplate restTemplate = new RestTemplate();
     private ArrayList<Room> rooms = new ArrayList<>();
+
+    @PostConstruct
+    private void seedTestRoom() {
+        // Valid profile indices (0-15, excluding 5 and 9)
+        String[][] players = {
+            {"Alice",   "0"},
+            {"Bob",     "3"},
+            {"Charlie", "6"},
+            {"Diana",   "1"},
+            {"Eve",     "12"},
+            {"Frank",   "8"},
+            {"Grace",   "14"},
+        };
+
+        Room room = new Room();
+        room.setId(java.util.UUID.randomUUID().toString());
+        room.setName("Test Room");
+        room.setStatus(GameStatus.WAITING);
+        room.setGameId("keezen");
+        room.setMinPlayers(2);
+
+        for (String[] p : players) {
+            String pid = java.util.UUID.randomUUID().toString();
+            room.addPlayer(pid);
+            room.addPlayerName(pid, p[0]);
+            room.addPlayerProfile(pid, p[1]);
+        }
+        room.setCreatedByUserId(room.getPlayerIds().get(0));
+        rooms.add(room);
+    }
 
     @Override
     public ArrayList<Room> getRooms() {
