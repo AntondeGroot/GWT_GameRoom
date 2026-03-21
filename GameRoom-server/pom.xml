@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>GameRoom-server</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <!-- The server can use Java 17 syntax -->
@@ -122,6 +122,35 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack-gwt-client</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>${project.groupId}</groupId>
+                      <artifactId>GameRoom-client</artifactId>
+                      <version>${project.version}</version>
+                      <type>war</type>
+                      <outputDirectory>${project.build.outputDirectory}/public</outputDirectory>
+                      <includes>app/**</includes>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
       <dependencies>
         <dependency>
           <groupId>${project.groupId}</groupId>

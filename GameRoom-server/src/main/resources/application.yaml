@@ -12,7 +12,9 @@ spring:
   application:
     name: GameRoom
   config:
-    import: "games.yaml"
+    import:
+      - "classpath:games.yaml"
+      - "optional:file:/opt/gameroom/games.yaml"
 
   devtools:
     restart:

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @SuppressWarnings("serial")
@@ -158,7 +159,12 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                 Map<String, Object> newGameRequest = new HashMap<>();
                 newGameRequest.put("roomName", room1.getName());
                 newGameRequest.put("maxPlayers", room1.getPlayerNames().size());
-                Map sessionResponse = restTemplate.postForObject(baseUrl + "/games", newGameRequest, Map.class);
+                Map sessionResponse;
+                try {
+                    sessionResponse = restTemplate.postForObject(baseUrl + "/games", newGameRequest, Map.class);
+                } catch (RestClientException e) {
+                    throw new IllegalArgumentException("Could not reach game server at " + baseUrl + ": " + e.getMessage());
+                }
                 String sessionId = sessionResponse.get("sessionId").toString();
 
                 // 2. Add each player — reuse their GameRoom playerId so no mapping is needed

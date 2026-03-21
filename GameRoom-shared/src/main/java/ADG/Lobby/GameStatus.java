@@ -1,6 +1,8 @@
 package ADG.Lobby;
 
-public enum GameStatus {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public enum GameStatus implements IsSerializable {
     WAITING,
     FULL,
     PLAYING

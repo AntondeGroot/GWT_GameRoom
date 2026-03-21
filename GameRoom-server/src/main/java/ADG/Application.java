@@ -7,10 +7,11 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.Objects;
+import java.io.IOException;
 
 @SpringBootApplication
 @ServletComponentScan
@@ -32,15 +33,19 @@ public class Application
       implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
     @Override
     public void customize(ConfigurableServletWebServerFactory factory) {
-      File laucherDirDirectory = new File(Objects.requireNonNull(getClass().getResource("/"))
-                                                 .getFile(),
-                                          "launcherDir");
-      if (laucherDirDirectory.exists()) {
-        // You have to set a document root here, otherwise RemoteServiceServlet will failed to find the
-        // corresponding serializationPolicyFilePath on a temporary web server started by spring boot application:
-        // servlet.getServletContext().getResourceAsStream(serializationPolicyFilePath) returns null.
-        // This has impact that java.io.Serializable can be no more used in RPC, only IsSerializable works.
-        factory.setDocumentRoot(laucherDirDirectory);
+      // getResource("/").getFile() is broken inside a fat JAR/WAR because the URL
+      // uses the jar: protocol, not file:. Use ClassPathResource instead, which
+      // handles both exploded (dev) and packaged (Pi) deployments.
+      // Note: the project uses IsSerializable throughout, so GWT-RPC works even
+      // when the document root cannot be set (no serialisation policy file needed).
+      try {
+        File launcherDir = new ClassPathResource("launcherDir").getFile();
+        if (launcherDir.exists()) {
+          factory.setDocumentRoot(launcherDir);
+        }
+      } catch (IOException e) {
+        // Running from a JAR — launcherDir is not extractable as a File.
+        // GWT-RPC still works because all shared classes implement IsSerializable.
       }
     }
   }
