@@ -3,5 +3,6 @@ games:
     - id: keezen
       name: Keezen
       baseUrl: http://localhost:4200
+      healthUrl: http://localhost:80/keezen/
       minPlayers: 2
       maxPlayers: 8

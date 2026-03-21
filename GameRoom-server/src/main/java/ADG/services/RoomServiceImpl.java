@@ -77,7 +77,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public Room createRoom(Room room) throws IllegalArgumentException {
-        if (rooms.contains(room) || room.getName().isBlank()) {
+        if (rooms.contains(room) || room.getName().isBlank() || room.getName().trim().length() < 3) {
             throw new IllegalArgumentException();
         }
 
@@ -184,7 +184,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
                 // 4. Store session info and mark room as playing
                 room1.setGameSessionId(sessionId);
-                room1.setGameBaseUrl(baseUrl);
+                room1.setGameBaseUrl("/" + game.getId());
                 room1.setStatus(GameStatus.PLAYING);
                 return room1;
             }
@@ -196,7 +196,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     public ArrayList<GameDefinition> getAvailableGames() {
         ArrayList<GameDefinition> reachable = new ArrayList<>();
         for (GameDefinition game : gamesConfig.getAvailable()) {
-            if (isReachable(game.getBaseUrl())) {
+            if (isReachable(game.getHealthUrl())) {
                 reachable.add(game);
             }
         }

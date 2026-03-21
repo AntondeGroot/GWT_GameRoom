@@ -7,6 +7,7 @@ public class GameDefinition implements IsSerializable {
     private String id;
     private String name;
     private String baseUrl;
+    private String healthUrl;
     private int minPlayers;
     private int maxPlayers;
 
@@ -20,6 +21,9 @@ public class GameDefinition implements IsSerializable {
 
     public String getBaseUrl() { return baseUrl; }
     public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
+
+    public String getHealthUrl() { return healthUrl != null ? healthUrl : baseUrl; }
+    public void setHealthUrl(String healthUrl) { this.healthUrl = healthUrl; }
 
     public int getMinPlayers() { return minPlayers; }
     public void setMinPlayers(int minPlayers) { this.minPlayers = minPlayers; }

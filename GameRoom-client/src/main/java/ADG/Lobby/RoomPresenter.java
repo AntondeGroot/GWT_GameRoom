@@ -18,7 +18,7 @@ import java.util.List;
 
 public class RoomPresenter implements Presenter {
 
-    private static final String CHAT_BASE_URL = "http://localhost:4100";
+    private static final String CHAT_BASE_URL = "";
 
     private final RoomServiceAsync roomService;
     private final RoomView roomView;
@@ -71,6 +71,7 @@ public class RoomPresenter implements Presenter {
         roomService.startGame(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
+                Window.alert("Failed to start game. Please try again.");
             }
 
             @Override

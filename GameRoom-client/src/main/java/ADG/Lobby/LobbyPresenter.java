@@ -44,6 +44,10 @@ public class LobbyPresenter implements Presenter {
                 view.showAlert("Room name cannot be empty.");
                 return;
             }
+            if (roomName.length() < 3) {
+                view.showAlert("Room name must be at least 3 characters.");
+                return;
+            }
             if (roomName.length() > 20) {
                 view.showAlert("Room name cannot exceed 20 characters.");
                 return;
