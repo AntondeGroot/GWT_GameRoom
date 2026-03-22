@@ -5,6 +5,7 @@ import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class LobbyPresenter implements Presenter {
     }
 
     private void bind() {
+        view.setCurrentPlayerId(Cookie.getPlayerId());
         view.getCreateRoomButton().addClickHandler(event -> {
             String roomName = view.getRoomNameInput().getText().trim();
             if (roomName.isEmpty()) {
@@ -54,7 +56,13 @@ public class LobbyPresenter implements Presenter {
             }
             createRoom(roomName);
         });
-        view.setJoinHandler(room -> navigateToCharacterSelection(room));
+        view.setJoinHandler(room -> {
+            if (GameStatus.PLAYING.equals(room.getStatus())) {
+                presenterManager.switchToGameRoom(room);
+            } else {
+                navigateToCharacterSelection(room);
+            }
+        });
     }
 
     private void updateRoomTable() {
@@ -83,7 +91,6 @@ public class LobbyPresenter implements Presenter {
     }
 
     private void navigateToGameOptions(Room room) {
-        addPlayerIdToRoom(room);
         presenterManager.switchToGameOptions(room);
     }
 
@@ -133,21 +140,20 @@ public class LobbyPresenter implements Presenter {
             view.showAlert("Please select a game.");
             return;
         }
-        Room room = new Room(roomName, Cookie.getPlayerId());
+        String playerId = Cookie.getPlayerId();
+        Room currentRoom = rooms.stream()
+                .filter(r -> r.getPlayerIds().contains(playerId))
+                .findFirst().orElse(null);
+        if (currentRoom != null) {
+            boolean confirmed = Window.confirm(
+                    "You are currently in room '" + currentRoom.getName() + "'. " +
+                    "Creating a new room will remove you from it. Continue?");
+            if (!confirmed) return;
+        }
+        Room room = new Room(roomName, playerId);
         room.setGameId(gameId);
-        roomService.createRoom(room, new AsyncCallback<Room>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                view.showAlert("Failed to create room: " + throwable.getMessage());
-                GWT.log("Room creation failed", throwable);
-            }
-
-            @Override
-            public void onSuccess(Room result) {
-                navigateToGameOptions(room);
-                view.getRoomNameInput().setText("");
-            }
-        });
+        view.getRoomNameInput().setText("");
+        navigateToGameOptions(room);
     }
 
     private synchronized void updateRooms(ArrayList<Room> fetchedRooms) {

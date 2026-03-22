@@ -7,6 +7,7 @@ import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,6 +38,7 @@ public class CharacterSelectionPresenter implements Presenter {
 
     @Override
     public void start() {
+        History.newItem("joining=" + room.getId());
         confirmReg = view.getConfirmButton().addClickHandler(event -> onConfirm());
         cancelReg  = view.getCancelButton().addClickHandler(event -> onBackToLobby());
         loadProfilePictures();
@@ -126,6 +128,10 @@ public class CharacterSelectionPresenter implements Presenter {
         }
     }
 
+    private boolean isCreator() {
+        return Cookie.getPlayerId().equals(room.getCreatedByUserId());
+    }
+
     private void onConfirm() {
         String username = view.getUsernameInput().getText().trim();
         if (username.isEmpty()) {
@@ -137,20 +143,42 @@ public class CharacterSelectionPresenter implements Presenter {
             return;
         }
 
-        roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {}
+        if (isCreator()) {
+            roomService.createRoom(room, new AsyncCallback<Room>() {
+                @Override
+                public void onFailure(Throwable t) {
+                    view.showAlert("Failed to create room: " + t.getMessage());
+                }
 
-            @Override
-            public void onSuccess(Void unused) {
-                presenterManager.switchToGameRoom(room);
-            }
-        });
+                @Override
+                public void onSuccess(Room created) {
+                    roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+                        @Override public void onFailure(Throwable t) {}
+                        @Override public void onSuccess(Void v) {}
+                    });
+                    roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
+                        @Override public void onFailure(Throwable t) {}
+                        @Override public void onSuccess(Void unused) {
+                            presenterManager.switchToGameRoom(room);
+                        }
+                    });
+                }
+            });
+        } else {
+            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
+                @Override public void onFailure(Throwable t) {}
+                @Override public void onSuccess(Void unused) {
+                    presenterManager.switchToGameRoom(room);
+                }
+            });
+        }
     }
 
     private void onBackToLobby() {
+        if (!isCreator()) {
+            removePlayerFromRoom();
+        }
         presenterManager.switchToLobby();
-        removePlayerFromRoom();
     }
 
     private void removePlayerFromRoom() {

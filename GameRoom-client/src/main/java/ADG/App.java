@@ -44,11 +44,24 @@ public class App implements EntryPoint {
 					presenterManager.switchToLobby();
 				}
 				public void onSuccess(Room room) {
-					GWT.log("Room from refresh page = "+room);
+					if (room == null) { presenterManager.switchToLobby(); return; }
 					presenterManager.switchToGameRoom(room);
 				}
 			});
-
+		} else if (token.startsWith("joining=")) {
+			String roomId = token.substring("joining=".length());
+			roomService.getRoomById(roomId, new AsyncCallback<Room>() {
+				public void onFailure(Throwable caught) {
+					presenterManager.switchToLobby();
+				}
+				public void onSuccess(Room room) {
+					if (room != null && room.getPlayerIds().contains(Cookie.getPlayerId())) {
+						presenterManager.switchToCharacterSelection(room);
+					} else {
+						presenterManager.switchToLobby();
+					}
+				}
+			});
 		} else {
 			presenterManager.switchToLobby();
 		}

@@ -80,9 +80,15 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         if (rooms.contains(room) || room.getName().isBlank() || room.getName().trim().length() < 3) {
             throw new IllegalArgumentException();
         }
+        rooms.stream()
+                .filter(r -> r.getPlayerIds().contains(room.getCreatedByUserId()))
+                .findFirst()
+                .ifPresent(r -> removePlayerFromRoom(room.getCreatedByUserId(), r));
 
-        gamesConfig.findById(room.getGameId())
-                .ifPresent(game -> room.setMinPlayers(game.getMinPlayers()));
+        gamesConfig.findById(room.getGameId()).ifPresent(game -> {
+            room.setMinPlayers(game.getMinPlayers());
+            room.setMaxPlayers(game.getMaxPlayers());
+        });
         rooms.add(room);
         return room;
     }
@@ -108,9 +114,16 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public void addPlayerIdToRoom(String playerId, Room room) {
+        boolean alreadyInAnotherRoom = rooms.stream()
+                .anyMatch(r -> !r.getName().equals(room.getName()) && r.getPlayerIds().contains(playerId));
+        if (alreadyInAnotherRoom) return;
+
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.addPlayer(playerId);
+                if (room1.getNrOfPlayers() >= room1.getMaxPlayers()) {
+                    room1.setStatus(GameStatus.FULL);
+                }
             }
         }
     }
@@ -120,6 +133,9 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.removePlayer(playerId);
+                if (room1.getStatus() == GameStatus.FULL && room1.getNrOfPlayers() < room1.getMaxPlayers()) {
+                    room1.setStatus(GameStatus.WAITING);
+                }
                 if (playerId.equals(room1.getCreatedByUserId()) && !room1.getPlayerIds().isEmpty()) {
                     String newCreator = room1.getPlayerIds().get(0);
                     room1.setCreatedByUserId(newCreator);

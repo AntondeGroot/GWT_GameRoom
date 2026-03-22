@@ -19,6 +19,7 @@ public class Room implements IsSerializable {
     private String gameBaseUrl;
     private String gameId;
     private int minPlayers = 1;
+    private int maxPlayers = 8;
     private boolean uniqueProfilePics = false;
 
     public Room() {} // Default constructor
@@ -124,6 +125,14 @@ public class Room implements IsSerializable {
 
     public void setMinPlayers(int minPlayers) {
         this.minPlayers = minPlayers;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
+    public void setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 
     public boolean isUniqueProfilePics() {
