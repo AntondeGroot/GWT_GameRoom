@@ -27,6 +27,7 @@ public class LobbyView extends Composite {
     }
 
     private JoinHandler joinHandler;
+    private String currentPlayerId;
     private ArrayList<GameDefinition> gameDefinitions = new ArrayList<>();
 
     public LobbyView() {
@@ -39,6 +40,10 @@ public class LobbyView extends Composite {
 
     public void setJoinHandler(JoinHandler handler) {
         this.joinHandler = handler;
+    }
+
+    public void setCurrentPlayerId(String playerId) {
+        this.currentPlayerId = playerId;
     }
 
     public void populateGameList(ArrayList<GameDefinition> games) {
@@ -98,7 +103,7 @@ public class LobbyView extends Composite {
         gameLabel.setStyleName("room-table-cell room-cell-game");
         row.add(gameLabel);
 
-        Label playersLabel = new Label(room.getNrOfPlayers() + " / 8");
+        Label playersLabel = new Label(room.getNrOfPlayers() + " / " + room.getMaxPlayers());
         playersLabel.setStyleName("room-table-cell room-cell-players");
         row.add(playersLabel);
 
@@ -108,12 +113,16 @@ public class LobbyView extends Composite {
 
         FlowPanel actionCell = new FlowPanel();
         actionCell.setStyleName("room-table-cell room-cell-action");
-        if (GameStatus.WAITING.equals(room.getStatus())) {
+        boolean isMember = currentPlayerId != null && room.getPlayerIds().contains(currentPlayerId);
+        if (isMember) {
+            Button rejoinBtn = new Button("Rejoin");
+            rejoinBtn.setStylePrimaryName("joinRoomButton");
+            rejoinBtn.addClickHandler(e -> { if (joinHandler != null) joinHandler.onJoin(room); });
+            actionCell.add(rejoinBtn);
+        } else if (GameStatus.WAITING.equals(room.getStatus())) {
             Button joinBtn = new Button("Join");
             joinBtn.setStylePrimaryName("joinRoomButton");
-            joinBtn.addClickHandler(e -> {
-                if (joinHandler != null) joinHandler.onJoin(room);
-            });
+            joinBtn.addClickHandler(e -> { if (joinHandler != null) joinHandler.onJoin(room); });
             actionCell.add(joinBtn);
         }
         row.add(actionCell);

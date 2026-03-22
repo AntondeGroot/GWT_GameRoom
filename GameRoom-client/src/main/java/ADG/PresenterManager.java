@@ -34,7 +34,7 @@ public class PresenterManager {
     }
 
     public void switchToGameOptions(Room room) {
-        gameOptionsPresenter = new GameOptionsPresenter(gameOptionsView, room, this, roomServiceAsync);
+        gameOptionsPresenter = new GameOptionsPresenter(gameOptionsView, room, this);
         switchPresenter(gameOptionsPresenter, gameOptionsView);
     }
 
