@@ -17,10 +17,7 @@ import java.util.Set;
 
 public class CharacterSelectionPresenter implements Presenter {
 
-    private static final int SPRITE_SHEET_TOTAL = 16;
-    private static final int[] EXCLUDED_INDICES = {5, 9};
-    private static final int SPRITE_SIZE = 100;
-    private static final String SPRITE_SHEET_URL = "/profilepics.png";
+    private static final int SPRITE_SIZE        = 100;
     private static final int POLLING_INTERVAL_MS = 500;
 
     private final RoomServiceAsync roomService;
@@ -28,16 +25,18 @@ public class CharacterSelectionPresenter implements Presenter {
     private final Room room;
     private final PresenterManager presenterManager;
     private int selectedProfileIndex = -1;
-    private Canvas[] canvases = new Canvas[SPRITE_SHEET_TOTAL];
+    private Canvas[] canvases = new Canvas[0];
     private HandlerRegistration confirmReg;
     private HandlerRegistration cancelReg;
     private final PollingService pollingService = new PollingService();
 
-    public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, RoomServiceAsync roomService) {
-        this.view = view;
-        this.room = room;
+    public CharacterSelectionPresenter(CharacterSelectionView view, Room room,
+                                       PresenterManager presenterManager,
+                                       RoomServiceAsync roomService) {
+        this.view             = view;
+        this.room             = room;
         this.presenterManager = presenterManager;
-        this.roomService = roomService;
+        this.roomService      = roomService;
     }
 
     @Override
@@ -91,7 +90,7 @@ public class CharacterSelectionPresenter implements Presenter {
 
     private void loadProfilePictures() {
         view.getProfilePicGrid().clear();
-        canvases = new Canvas[SPRITE_SHEET_TOTAL];
+        canvases = new Canvas[SpriteSheets.totalSprites()];
 
         Set<Integer> takenIndices = new HashSet<>();
         if (room.isUniqueProfilePics()) {
@@ -100,10 +99,19 @@ public class CharacterSelectionPresenter implements Presenter {
             }
         }
 
-        for (int i = 0; i < SPRITE_SHEET_TOTAL; i++) {
-            if (isExcluded(i)) continue;
-            final int spriteIndex = i;
-            final boolean taken = takenIndices.contains(i);
+        int globalOffset = 0;
+        for (SpriteSheets.Sheet sheet : SpriteSheets.all()) {
+            loadSheet(sheet, globalOffset, takenIndices);
+            globalOffset += sheet.total();
+        }
+    }
+
+    private void loadSheet(SpriteSheets.Sheet sheet, int globalOffset, Set<Integer> takenIndices) {
+        // Create canvas elements for every non-excluded sprite in this sheet
+        for (int local = 0; local < sheet.total(); local++) {
+            if (sheet.isExcluded(local)) continue;
+            final int globalIndex = globalOffset + local;
+            final boolean taken = takenIndices.contains(globalIndex);
             Canvas canvas = Canvas.createIfSupported();
             canvas.setWidth(SPRITE_SIZE + "px");
             canvas.setHeight(SPRITE_SIZE + "px");
@@ -111,26 +119,28 @@ public class CharacterSelectionPresenter implements Presenter {
             canvas.setCoordinateSpaceHeight(SPRITE_SIZE);
             canvas.setStyleName(taken ? "profile-pic profile-pic-taken" : "profile-pic");
             if (!taken) {
-                canvas.addClickHandler(event -> onProfilePicSelected(spriteIndex, canvas));
+                canvas.addClickHandler(event -> onProfilePicSelected(globalIndex, canvas));
             }
             view.getProfilePicGrid().add(canvas);
-            canvases[i] = canvas;
+            canvases[globalIndex] = canvas;
         }
 
+        // Load the sprite sheet image and draw each sprite into its canvas
         Image img = new Image();
         img.setVisible(false);
         view.getProfilePicGrid().add(img);
         img.addLoadHandler((LoadEvent e) -> {
             ImageElement imgEl = ImageElement.as(img.getElement());
-            double sw = 1024 / 4.0;
-            double sh = 1024 / 4.0;
-            for (int i = 0; i < SPRITE_SHEET_TOTAL; i++) {
-                if (isExcluded(i)) continue;
-                double sx = sw * (i % 4);
-                double sy = sh * (i / 4);
-                Context2d ctx = canvases[i].getContext2d();
-                ctx.drawImage(imgEl, sx, sy, sw, sh, 0, 0, SPRITE_SIZE, SPRITE_SIZE);
-                if (takenIndices.contains(i)) {
+            for (int local = 0; local < sheet.total(); local++) {
+                if (sheet.isExcluded(local)) continue;
+                int globalIndex = globalOffset + local;
+                int localCol = local % sheet.cols;
+                int localRow = local / sheet.cols;
+                Context2d ctx = canvases[globalIndex].getContext2d();
+                ctx.drawImage(imgEl,
+                        sheet.srcX(localCol), sheet.srcY(localRow), sheet.srcW(), sheet.srcH(),
+                        0, 0, SPRITE_SIZE, SPRITE_SIZE);
+                if (takenIndices.contains(globalIndex)) {
                     ctx.setFillStyle("rgba(10, 6, 20, 0.72)");
                     ctx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
                     ctx.setFillStyle("rgba(248, 113, 113, 0.9)");
@@ -145,19 +155,12 @@ public class CharacterSelectionPresenter implements Presenter {
                 canvases[selectedProfileIndex].addStyleName("profile-pic-selected");
             }
         });
-        img.setUrl(SPRITE_SHEET_URL);
+        img.setUrl(sheet.url);
     }
 
-    private boolean isExcluded(int index) {
-        for (int excluded : EXCLUDED_INDICES) {
-            if (index == excluded) return true;
-        }
-        return false;
-    }
-
-    private void onProfilePicSelected(int index, Canvas selectedCanvas) {
-        selectedProfileIndex = index;
-        view.getSelectedProfileLabel().setText("Profile " + (index + 1) + " selected");
+    private void onProfilePicSelected(int globalIndex, Canvas selectedCanvas) {
+        selectedProfileIndex = globalIndex;
+        view.getSelectedProfileLabel().setText("");
         clearCanvasSelection();
         selectedCanvas.addStyleName("profile-pic-selected");
     }
@@ -191,7 +194,8 @@ public class CharacterSelectionPresenter implements Presenter {
                 }
                 @Override public void onSuccess(Void v) {}
             });
-            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
+            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username,
+                    String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
                 @Override public void onFailure(Throwable t) {
                     view.showAlert("Failed to set profile: " + t.getMessage());
                 }
@@ -207,7 +211,8 @@ public class CharacterSelectionPresenter implements Presenter {
                 }
             });
         } else {
-            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
+            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username,
+                    String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
                 @Override public void onFailure(Throwable t) {
                     view.showAlert("Failed to set profile: " + t.getMessage());
                 }

@@ -4,11 +4,17 @@
         <g:HTML>
             <h1>Character Selection</h1>
         </g:HTML>
-        <g:HorizontalPanel>
-            <g:Label text="Enter Username:"/>
-            <g:TextBox ui:field="usernameInput"/>
-        </g:HorizontalPanel>
-        <g:Label text="Select Your Profile Picture:"/>
+        <g:FlowPanel styleName="steps-container">
+            <g:FlowPanel styleName="step-header">
+                <g:HTML><span class="step-badge">1</span></g:HTML>
+                <g:HTML><span class="step-label">Enter Username</span></g:HTML>
+                <g:TextBox ui:field="usernameInput"/>
+            </g:FlowPanel>
+            <g:FlowPanel styleName="step-header">
+                <g:HTML><span class="step-badge">2</span></g:HTML>
+                <g:HTML><span class="step-label">Select Your Profile Picture</span></g:HTML>
+            </g:FlowPanel>
+        </g:FlowPanel>
         <g:FlowPanel ui:field="profilePicGrid" styleName="profile-pic-grid"/>
         <g:Label ui:field="selectedProfileLabel" text="No profile picture selected"/>
         <g:FlowPanel styleName="game-options-actions">

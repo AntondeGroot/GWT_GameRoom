@@ -20,7 +20,7 @@ public class Room implements IsSerializable {
     private String gameId;
     private int minPlayers = 1;
     private int maxPlayers = 8;
-    private boolean uniqueProfilePics = false;
+    private boolean uniqueProfilePics = true;
 
     public Room() {} // Default constructor
 

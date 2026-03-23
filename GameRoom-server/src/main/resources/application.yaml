@@ -15,6 +15,8 @@ spring:
     import:
       - "classpath:games.yaml"
       - "optional:file:/opt/gameroom/games.yaml"
+      - "classpath:sprite-sheets.yaml"
+      - "optional:file:/opt/gameroom/sprite-sheets.yaml"
 
   devtools:
     restart:

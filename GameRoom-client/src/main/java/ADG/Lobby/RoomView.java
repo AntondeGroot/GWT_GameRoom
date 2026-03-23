@@ -66,14 +66,31 @@ public class RoomView extends Composite {
             first = false;
             String name = userNames.getOrDefault(userId, "?");
             String profileStr = userProfiles.get(userId);
-            int pi = 0;
+            int globalIndex = 0;
             if (profileStr != null) {
-                try { pi = Integer.parseInt(profileStr); } catch (NumberFormatException ignored) {}
+                try { globalIndex = Integer.parseInt(profileStr); } catch (NumberFormatException ignored) {}
             }
+            SpriteSheets.Sheet sheet = SpriteSheets.sheetFor(globalIndex);
+            int localIndex = SpriteSheets.localIndexFor(globalIndex);
+            int localCol = localIndex % sheet.cols;
+            int localRow = localIndex / sheet.cols;
             String safeId = userId.replaceAll("[^a-zA-Z0-9]", "_");
-            json.append("{\"name\":\"").append(name.replace("\\", "\\\\").replace("\"", "\\\""))
-                .append("\",\"pi\":").append(pi)
-                .append(",\"safeId\":\"").append(safeId).append("\"}");
+            String safeName = name.replace("\\", "\\\\").replace("\"", "\\\"");
+            // srcX/Y/W/H are the inset-adjusted source rect within the sprite sheet.
+            // renderedImgW/H are the dimensions the full sheet image must be rendered at
+            // so that one cell fills exactly displaySize (= R*2) pixels in D3.
+            // renderedImgW = imgW * displaySize / srcW  →  passed as multiplier factors.
+            json.append("{")
+                .append("\"name\":\"").append(safeName).append("\"")
+                .append(",\"safeId\":\"").append(safeId).append("\"")
+                .append(",\"sheetUrl\":\"").append(sheet.url).append("\"")
+                .append(",\"srcX\":").append(sheet.srcX(localCol))
+                .append(",\"srcY\":").append(sheet.srcY(localRow))
+                .append(",\"srcW\":").append(sheet.srcW())
+                .append(",\"srcH\":").append(sheet.srcH())
+                .append(",\"imgW\":").append(sheet.imgW)
+                .append(",\"imgH\":").append(sheet.imgH)
+                .append("}");
         }
         json.append("]");
         renderD3Simulation(playerPanel.getElement(), json.toString());
@@ -96,7 +113,6 @@ public class RoomView extends Composite {
         var height = 400;
         var R      = 36;
         var displaySize = R * 2;
-        var imgScale    = displaySize / 256.0;
 
         var svg = d3.select(container).append('svg')
             .attr('width', '100%').attr('height', height);
@@ -159,13 +175,16 @@ public class RoomView extends Composite {
             .attr('stroke', '#8b5cf6')
             .attr('stroke-width', 2);
 
-        // sprite image
+        // Sprite image: position the full sheet so the desired sprite cell
+        // (inset-adjusted) lands exactly over the circle, then clip.
+        // x = -(srcX / srcW) * displaySize - R  places the cell's left edge at -R.
+        // width = imgW * displaySize / srcW  scales the sheet so srcW fills displaySize.
         nodeGroup.append('image')
-            .attr('href', '/profilepics.png')
-            .attr('x', function(d) { return -(d.pi % 4) * displaySize - R; })
-            .attr('y', function(d) { return -Math.floor(d.pi / 4) * displaySize - R; })
-            .attr('width', 1024 * imgScale)
-            .attr('height', 1024 * imgScale)
+            .attr('href', function(d) { return d.sheetUrl; })
+            .attr('x', function(d) { return -(d.srcX / d.srcW) * displaySize - R; })
+            .attr('y', function(d) { return -(d.srcY / d.srcH) * displaySize - R; })
+            .attr('width',  function(d) { return d.imgW * displaySize / d.srcW; })
+            .attr('height', function(d) { return d.imgH * displaySize / d.srcH; })
             .attr('clip-path', function(d) { return 'url(#clip-' + d.safeId + ')'; });
 
         // name label

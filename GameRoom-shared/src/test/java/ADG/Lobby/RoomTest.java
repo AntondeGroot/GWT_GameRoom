@@ -100,8 +100,8 @@ class RoomTest {
     // ── options ──────────────────────────────────────────────────────────────
 
     @Test
-    void uniqueProfilePicsDefaultsFalse() {
-        assertFalse(new Room().isUniqueProfilePics());
+    void uniqueProfilePicsDefaultsTrue() {
+        assertTrue(new Room().isUniqueProfilePics());
     }
 
     @Test
