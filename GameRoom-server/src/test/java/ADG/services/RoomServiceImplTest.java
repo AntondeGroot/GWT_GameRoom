@@ -197,7 +197,7 @@ class RoomServiceImplTest {
         Room roomA = buildRoom("Alpha");
         service.createRoom(roomA);
         service.publishRoom(roomA.getId());
-        service.addPlayerIdToRoom("creator-1", roomA);
+        service.addPlayerIdToRoom("creator-1", roomA.getId());
 
         Room roomB = buildRoom("Beta"); // same createdByUserId ("creator-1")
         service.createRoom(roomB);
@@ -221,6 +221,74 @@ class RoomServiceImplTest {
     @Test
     void getRoomByIdReturnsNullForUnknownId() {
         assertNull(service.getRoomById("does-not-exist"));
+    }
+
+    // ── deleteEmptyRooms ─────────────────────────────────────────────────────
+
+    @Test
+    void emptyRoomIsDeletedAfterTtlExpires() {
+        Room room = buildRoom("Alpha");
+        service.createRoom(room);
+        service.publishRoom(room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.removePlayerFromRoom("player-1", room.getId());
+
+        // Manually backdate the empty timestamp to simulate 15+ minutes passing
+        service.emptyRoomTimestamps.put(room.getId(), System.currentTimeMillis() - (16 * 60 * 1000L));
+
+        service.deleteEmptyRooms();
+
+        assertNull(service.getRoomById(room.getId()));
+    }
+
+    @Test
+    void emptyRoomIsKeptIfTtlHasNotExpired() {
+        Room room = buildRoom("Alpha");
+        service.createRoom(room);
+        service.publishRoom(room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.removePlayerFromRoom("player-1", room.getId());
+
+        service.deleteEmptyRooms(); // called immediately — TTL not yet exceeded
+
+        assertNotNull(service.getRoomById(room.getId()));
+    }
+
+    @Test
+    void roomWithPlayersIsNotScheduledForDeletion() {
+        Room room = buildRoom("Alpha");
+        service.createRoom(room);
+        service.publishRoom(room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId());
+
+        service.emptyRoomTimestamps.put(room.getId(), System.currentTimeMillis() - (16 * 60 * 1000L));
+        service.deleteEmptyRooms();
+
+        assertNotNull(service.getRoomById(room.getId()));
+    }
+
+    @Test
+    void joiningRoomCancelsEmptyTimer() {
+        Room room = buildRoom("Alpha");
+        service.createRoom(room);
+        service.publishRoom(room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.removePlayerFromRoom("player-1", room.getId()); // room becomes empty → timer starts
+        service.addPlayerIdToRoom("player-2", room.getId());    // player joins → timer cancelled
+
+        // Timer must have been removed — no entry should exist for this room
+        assertFalse(service.emptyRoomTimestamps.containsKey(room.getId()));
+    }
+
+    @Test
+    void pendingRoomIsNotScheduledForDeletion() {
+        Room room = buildRoom("Alpha");
+        service.createRoom(room); // status is PENDING, no players
+
+        service.deleteEmptyRooms();
+
+        assertNotNull(service.getRoomById(room.getId()));
+        assertTrue(service.emptyRoomTimestamps.isEmpty());
     }
 
     // ── deleteRoom ───────────────────────────────────────────────────────────
@@ -260,7 +328,7 @@ class RoomServiceImplTest {
     void addPlayerIdToRoomAppendsId() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
 
         assertEquals(1, service.getRoomById(room.getId()).getNrOfPlayers());
     }
@@ -271,11 +339,11 @@ class RoomServiceImplTest {
         room.setMaxPlayers(2);
         service.createRoom(room);
         service.publishRoom(room.getId());
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
 
         assertEquals(GameStatus.WAITING, service.getRoomById(room.getId()).getStatus());
 
-        service.addPlayerIdToRoom("player-2", room);
+        service.addPlayerIdToRoom("player-2", room.getId());
 
         assertEquals(GameStatus.FULL, service.getRoomById(room.getId()).getStatus());
     }
@@ -286,9 +354,9 @@ class RoomServiceImplTest {
         room.setMaxPlayers(4);
         service.createRoom(room);
         service.publishRoom(room.getId());
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-2", room);
-        service.addPlayerIdToRoom("player-3", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-2", room.getId());
+        service.addPlayerIdToRoom("player-3", room.getId());
 
         assertEquals(GameStatus.WAITING, service.getRoomById(room.getId()).getStatus());
     }
@@ -299,9 +367,9 @@ class RoomServiceImplTest {
         Room roomB = buildRoom("Beta");
         service.createRoom(roomA);
         service.createRoom(roomB);
-        service.addPlayerIdToRoom("player-1", roomA);
+        service.addPlayerIdToRoom("player-1", roomA.getId());
 
-        service.addPlayerIdToRoom("player-1", roomB); // should be silently rejected
+        service.addPlayerIdToRoom("player-1", roomB.getId()); // should be silently rejected
 
         assertEquals(1, service.getRoomById(roomA.getId()).getNrOfPlayers());
         assertEquals(0, service.getRoomById(roomB.getId()).getNrOfPlayers());
@@ -311,8 +379,8 @@ class RoomServiceImplTest {
     void addPlayerIdToRoomAllowsRejoiningSameRoom() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-1", room); // rejoin = idempotent
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId()); // rejoin = idempotent
 
         assertEquals(1, service.getRoomById(room.getId()).getNrOfPlayers());
     }
@@ -321,8 +389,8 @@ class RoomServiceImplTest {
     void addPlayerIdToRoomIgnoresDuplicates() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-1", room.getId());
 
         assertEquals(1, service.getRoomById(room.getId()).getNrOfPlayers());
     }
@@ -333,10 +401,10 @@ class RoomServiceImplTest {
     void removePlayerFromRoomRemovesPlayer() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
         service.setUsernameAndProfile(room, "player-1", "Alice", "3");
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         Room found = service.getRoomById(room.getId());
         assertEquals(0, found.getNrOfPlayers());
@@ -348,10 +416,10 @@ class RoomServiceImplTest {
         Room room = buildRoom("Alpha");
         room.setCreatedByUserId("player-1");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-2", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-2", room.getId());
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         assertEquals("player-2", service.getRoomById(room.getId()).getCreatedByUserId());
     }
@@ -361,11 +429,11 @@ class RoomServiceImplTest {
         Room room = buildRoom("Alpha");
         room.setMaxPlayers(2);
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-2", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-2", room.getId());
         assertEquals(GameStatus.FULL, service.getRoomById(room.getId()).getStatus());
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         assertEquals(GameStatus.WAITING, service.getRoomById(room.getId()).getStatus());
     }
@@ -376,10 +444,10 @@ class RoomServiceImplTest {
         room.setMaxPlayers(4);
         service.createRoom(room);
         service.publishRoom(room.getId());
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-2", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-2", room.getId());
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         assertEquals(GameStatus.WAITING, service.getRoomById(room.getId()).getStatus());
     }
@@ -389,11 +457,11 @@ class RoomServiceImplTest {
         Room room = buildRoom("Alpha");
         room.setMaxPlayers(2);
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
-        service.addPlayerIdToRoom("player-2", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
+        service.addPlayerIdToRoom("player-2", room.getId());
         room.setStatus(GameStatus.PLAYING); // game started
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         assertEquals(GameStatus.PLAYING, service.getRoomById(room.getId()).getStatus());
     }
@@ -404,10 +472,10 @@ class RoomServiceImplTest {
         Room roomB = buildRoom("Beta");
         service.createRoom(roomA);
         service.createRoom(roomB);
-        service.addPlayerIdToRoom("player-1", roomA);
+        service.addPlayerIdToRoom("player-1", roomA.getId());
 
-        service.removePlayerFromRoom("player-1", roomA);
-        service.addPlayerIdToRoom("player-1", roomB);
+        service.removePlayerFromRoom("player-1", roomA.getId());
+        service.addPlayerIdToRoom("player-1", roomB.getId());
 
         assertEquals(0, service.getRoomById(roomA.getId()).getNrOfPlayers());
         assertEquals(1, service.getRoomById(roomB.getId()).getNrOfPlayers());
@@ -418,9 +486,9 @@ class RoomServiceImplTest {
         Room room = buildRoom("Alpha");
         room.setCreatedByUserId("player-1");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
 
-        service.removePlayerFromRoom("player-1", room);
+        service.removePlayerFromRoom("player-1", room.getId());
 
         // playerIds is empty — no ownership transfer attempted
         assertEquals(0, service.getRoomById(room.getId()).getNrOfPlayers());
@@ -432,7 +500,7 @@ class RoomServiceImplTest {
     void setUsernameAndProfileStoresBoth() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
         service.setUsernameAndProfile(room, "player-1", "Alice", "5");
 
         Room found = service.getRoomById(room.getId());
@@ -444,7 +512,7 @@ class RoomServiceImplTest {
     void setUsernameAndProfileOverwritesPrevious() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.addPlayerIdToRoom("player-1", room);
+        service.addPlayerIdToRoom("player-1", room.getId());
         service.setUsernameAndProfile(room, "player-1", "Alice", "5");
         service.setUsernameAndProfile(room, "player-1", "Alice2", "7");
 

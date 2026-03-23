@@ -20,10 +20,10 @@ public interface RoomServiceAsync {
     void updateRoom(Room room, AsyncCallback<Void> asyncCallback)
         throws IllegalArgumentException;
 
-    void addPlayerIdToRoom(String playerId, Room room, AsyncCallback<Void> asyncCallback)
+    void addPlayerIdToRoom(String playerId, String roomId, AsyncCallback<Void> asyncCallback)
             throws IllegalArgumentException;
 
-    void removePlayerFromRoom(String playerId, Room room, AsyncCallback<Void> asyncCallback)
+    void removePlayerFromRoom(String playerId, String roomId, AsyncCallback<Void> asyncCallback)
             throws IllegalArgumentException;
 
     void setUsernameAndProfile(Room room, String userId, String username, String profileId, AsyncCallback<Void> asyncCallback)

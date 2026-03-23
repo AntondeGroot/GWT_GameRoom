@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,8 +27,11 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     @Autowired
     private GamesConfig gamesConfig;
 
+    private static final long EMPTY_ROOM_TTL_MS = 15 * 60 * 1000L;
+
     private final RestTemplate restTemplate = new RestTemplate();
     private ArrayList<Room> rooms = new ArrayList<>();
+    final ConcurrentHashMap<String, Long> emptyRoomTimestamps = new ConcurrentHashMap<>();
 
     @PostConstruct
     private void seedTestRoom() {
@@ -94,7 +99,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         rooms.stream()
                 .filter(r -> r.getPlayerIds().contains(room.getCreatedByUserId()))
                 .findFirst()
-                .ifPresent(r -> removePlayerFromRoom(room.getCreatedByUserId(), r));
+                .ifPresent(r -> removePlayerFromRoom(room.getCreatedByUserId(), r.getId()));
 
         gamesConfig.findById(room.getGameId()).ifPresent(game -> {
             room.setMinPlayers(game.getMinPlayers());
@@ -133,14 +138,15 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public synchronized void addPlayerIdToRoom(String playerId, Room room) {
+    public synchronized void addPlayerIdToRoom(String playerId, String roomId) {
         boolean alreadyInAnotherRoom = rooms.stream()
-                .anyMatch(r -> !r.getId().equals(room.getId()) && r.getPlayerIds().contains(playerId));
+                .anyMatch(r -> !r.getId().equals(roomId) && r.getPlayerIds().contains(playerId));
         if (alreadyInAnotherRoom) return;
 
         for (Room room1 : rooms) {
-            if (room1.getId().equals(room.getId())) {
+            if (room1.getId().equals(roomId)) {
                 room1.addPlayer(playerId);
+                emptyRoomTimestamps.remove(room1.getId());
                 if (room1.getNrOfPlayers() >= room1.getMaxPlayers()) {
                     room1.setStatus(GameStatus.FULL);
                 }
@@ -149,9 +155,9 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public synchronized void removePlayerFromRoom(String playerId, Room room) {
+    public synchronized void removePlayerFromRoom(String playerId, String roomId) {
         for (Room room1 : rooms) {
-            if (room1.getId().equals(room.getId())) {
+            if (room1.getId().equals(roomId)) {
                 room1.removePlayer(playerId);
                 if (room1.getStatus() == GameStatus.FULL && room1.getNrOfPlayers() < room1.getMaxPlayers()) {
                     room1.setStatus(GameStatus.WAITING);
@@ -159,6 +165,9 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                 if (playerId.equals(room1.getCreatedByUserId()) && !room1.getPlayerIds().isEmpty()) {
                     String newCreator = room1.getPlayerIds().get(0);
                     room1.setCreatedByUserId(newCreator);
+                }
+                if (room1.getPlayerIds().isEmpty() && room1.getStatus() != GameStatus.PENDING) {
+                    emptyRoomTimestamps.put(room1.getId(), System.currentTimeMillis());
                 }
             }
         }
@@ -245,6 +254,18 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
             }
         }
         return reachable;
+    }
+
+    @Scheduled(fixedDelay = 60_000)
+    public synchronized void deleteEmptyRooms() {
+        long now = System.currentTimeMillis();
+        emptyRoomTimestamps.entrySet().removeIf(entry -> {
+            if (now - entry.getValue() >= EMPTY_ROOM_TTL_MS) {
+                rooms.removeIf(r -> r.getId().equals(entry.getKey()) && r.getPlayerIds().isEmpty());
+                return true;
+            }
+            return false;
+        });
     }
 
     private boolean isReachable(String baseUrl) {
