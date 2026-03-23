@@ -140,6 +140,13 @@ public class LobbyPresenter implements Presenter {
             view.showAlert("Please select a game.");
             return;
         }
+        // Fast client-side check against cached list before hitting the server
+        boolean nameExists = rooms.stream()
+                .anyMatch(r -> r.getName().equalsIgnoreCase(roomName));
+        if (nameExists) {
+            view.showAlert("A room with this name already exists.");
+            return;
+        }
         String playerId = Cookie.getPlayerId();
         Room currentRoom = rooms.stream()
                 .filter(r -> r.getPlayerIds().contains(playerId))
@@ -153,7 +160,16 @@ public class LobbyPresenter implements Presenter {
         Room room = new Room(roomName, playerId);
         room.setGameId(gameId);
         view.getRoomNameInput().setText("");
-        navigateToGameOptions(room);
+        roomService.createRoom(room, new AsyncCallback<Room>() {
+            @Override
+            public void onFailure(Throwable t) {
+                view.showAlert("Could not create room: " + t.getMessage());
+            }
+            @Override
+            public void onSuccess(Room created) {
+                navigateToGameOptions(created);
+            }
+        });
     }
 
     private synchronized void updateRooms(ArrayList<Room> fetchedRooms) {

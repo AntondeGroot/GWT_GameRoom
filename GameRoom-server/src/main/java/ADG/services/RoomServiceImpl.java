@@ -60,7 +60,13 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public ArrayList<Room> getRooms() {
-        return rooms;
+        ArrayList<Room> visible = new ArrayList<>();
+        for (Room r : rooms) {
+            if (r.getStatus() != GameStatus.PENDING) {
+                visible.add(r);
+            }
+        }
+        return visible;
     }
 
     @Override
@@ -77,8 +83,13 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public Room createRoom(Room room) throws IllegalArgumentException {
-        if (rooms.contains(room) || room.getName().isBlank() || room.getName().trim().length() < 3) {
-            throw new IllegalArgumentException();
+        if (room.getName().isBlank() || room.getName().trim().length() < 3) {
+            throw new IllegalArgumentException("Room name must be at least 3 characters.");
+        }
+        boolean nameAlreadyExists = rooms.stream()
+                .anyMatch(r -> r.getName().equalsIgnoreCase(room.getName().trim()));
+        if (nameAlreadyExists) {
+            throw new IllegalArgumentException("A room with this name already exists.");
         }
         rooms.stream()
                 .filter(r -> r.getPlayerIds().contains(room.getCreatedByUserId()))
@@ -89,8 +100,17 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
             room.setMinPlayers(game.getMinPlayers());
             room.setMaxPlayers(game.getMaxPlayers());
         });
+        room.setStatus(GameStatus.PENDING);
         rooms.add(room);
         return room;
+    }
+
+    @Override
+    public void publishRoom(String roomId) {
+        rooms.stream()
+                .filter(r -> r.getId().equals(roomId) && r.getStatus() == GameStatus.PENDING)
+                .findFirst()
+                .ifPresent(r -> r.setStatus(GameStatus.WAITING));
     }
 
     @Override

@@ -29,6 +29,9 @@ public interface RoomServiceAsync {
     void setUsernameAndProfile(Room room, String userId, String username, String profileId, AsyncCallback<Void> asyncCallback)
         throws IllegalArgumentException;
 
+    void publishRoom(String roomId, AsyncCallback<Void> asyncCallback)
+            throws IllegalArgumentException;
+
     void startGame(String roomId, AsyncCallback<Room> asyncCallback)
             throws IllegalArgumentException;
 

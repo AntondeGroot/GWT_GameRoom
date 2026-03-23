@@ -144,21 +144,18 @@ public class CharacterSelectionPresenter implements Presenter {
         }
 
         if (isCreator()) {
-            roomService.createRoom(room, new AsyncCallback<Room>() {
-                @Override
-                public void onFailure(Throwable t) {
-                    view.showAlert("Failed to create room: " + t.getMessage());
+            roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+                @Override public void onFailure(Throwable t) {}
+                @Override public void onSuccess(Void v) {}
+            });
+            roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
+                @Override public void onFailure(Throwable t) {
+                    view.showAlert("Failed to set profile: " + t.getMessage());
                 }
-
-                @Override
-                public void onSuccess(Room created) {
-                    roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+                @Override public void onSuccess(Void unused) {
+                    roomService.publishRoom(room.getId(), new AsyncCallback<Void>() {
                         @Override public void onFailure(Throwable t) {}
-                        @Override public void onSuccess(Void v) {}
-                    });
-                    roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
-                        @Override public void onFailure(Throwable t) {}
-                        @Override public void onSuccess(Void unused) {
+                        @Override public void onSuccess(Void v) {
                             presenterManager.switchToGameRoom(room);
                         }
                     });
@@ -175,16 +172,17 @@ public class CharacterSelectionPresenter implements Presenter {
     }
 
     private void onBackToLobby() {
-        if (!isCreator()) {
-            removePlayerFromRoom();
+        if (isCreator()) {
+            roomService.deleteRoom(room.getName(), new AsyncCallback<Void>() {
+                @Override public void onFailure(Throwable t) {}
+                @Override public void onSuccess(Void v) {}
+            });
+        } else {
+            roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+                @Override public void onFailure(Throwable throwable) {}
+                @Override public void onSuccess(Void v) {}
+            });
         }
         presenterManager.switchToLobby();
-    }
-
-    private void removePlayerFromRoom() {
-        roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
-            @Override public void onFailure(Throwable throwable) {}
-            @Override public void onSuccess(Void v) {}
-        });
     }
 }
