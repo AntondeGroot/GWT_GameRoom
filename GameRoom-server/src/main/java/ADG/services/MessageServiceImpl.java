@@ -6,29 +6,25 @@ import com.google.gwt.user.server.rpc.jakarta.RemoteServiceServlet;
 import jakarta.servlet.annotation.WebServlet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @SuppressWarnings("serial")
 @WebServlet("/app/message")
 public class MessageServiceImpl extends RemoteServiceServlet implements MessageService {
-    private final ArrayList<String> roomIds = new ArrayList<>();
-    private final HashMap<String, ArrayList<Message>> messagesMap = new HashMap<>();
+    private final ConcurrentHashMap<String, CopyOnWriteArrayList<Message>> messagesMap = new ConcurrentHashMap<>();
 
     @Override
     public void sendMessage(String roomId, Message message) {
-        if (!roomIds.contains(roomId)) {
-            roomIds.add(roomId);
-            messagesMap.put(roomId, new ArrayList<>());
-        }
-        messagesMap.get(roomId).add(message);
+        messagesMap.computeIfAbsent(roomId, k -> new CopyOnWriteArrayList<>()).add(message);
     }
 
     @Override
     public ArrayList<Message> getMessages(String roomId) {
-        if (!roomIds.contains(roomId)) {
+        CopyOnWriteArrayList<Message> messages = messagesMap.get(roomId);
+        if (messages == null) {
             return new ArrayList<>();
         }
-
-        return messagesMap.get(roomId);
+        return new ArrayList<>(messages);
     }
 }
