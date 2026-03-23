@@ -59,7 +59,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public ArrayList<Room> getRooms() {
+    public synchronized ArrayList<Room> getRooms() {
         ArrayList<Room> visible = new ArrayList<>();
         for (Room r : rooms) {
             if (r.getStatus() != GameStatus.PENDING) {
@@ -70,7 +70,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public Room getRoomById(String roomId){
+    public synchronized Room getRoomById(String roomId){
         Optional<Room> result = rooms.stream().filter(room -> room.getId().equals(roomId)).findFirst();
         if(result.isPresent()) {
             if(result.get().getId() == null){
@@ -82,7 +82,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public Room createRoom(Room room) throws IllegalArgumentException {
+    public synchronized Room createRoom(Room room) throws IllegalArgumentException {
         if (room.getName().isBlank() || room.getName().trim().length() < 3) {
             throw new IllegalArgumentException("Room name must be at least 3 characters.");
         }
@@ -106,7 +106,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void publishRoom(String roomId) {
+    public synchronized void publishRoom(String roomId) {
         rooms.stream()
                 .filter(r -> r.getId().equals(roomId) && r.getStatus() == GameStatus.PENDING)
                 .findFirst()
@@ -114,7 +114,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void deleteRoom(String roomName) {
+    public synchronized void deleteRoom(String roomName) {
         Optional<Room> result = rooms.stream().filter(room -> room.getName().equals(roomName)).findFirst();
         if(result.isPresent()) {
             Room foundRoom = result.get();
@@ -123,7 +123,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void updateRoom(Room room){
+    public synchronized void updateRoom(Room room){
         Optional<Room> result = rooms.stream().filter(r -> r.getName().equals(room.getName())).findFirst();
         if(result.isPresent()) {
             Room foundRoom = result.get();
@@ -133,7 +133,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void addPlayerIdToRoom(String playerId, Room room) {
+    public synchronized void addPlayerIdToRoom(String playerId, Room room) {
         boolean alreadyInAnotherRoom = rooms.stream()
                 .anyMatch(r -> !r.getName().equals(room.getName()) && r.getPlayerIds().contains(playerId));
         if (alreadyInAnotherRoom) return;
@@ -149,7 +149,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void removePlayerFromRoom(String playerId, Room room) {
+    public synchronized void removePlayerFromRoom(String playerId, Room room) {
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.removePlayer(playerId);
@@ -165,7 +165,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public void setUsernameAndProfile(Room room, String userId, String username, String profileId) {
+    public synchronized void setUsernameAndProfile(Room room, String userId, String username, String profileId) {
         for (Room room1 : rooms) {
             if (room1.getName().equals(room.getName())) {
                 room1.addPlayerName(userId, username);
@@ -175,7 +175,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public Room startGame(String roomId) {
+    public synchronized Room startGame(String roomId) {
         for (Room room1 : rooms) {
             if (room1.getId().equals(roomId)) {
 
@@ -229,7 +229,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public ArrayList<GameDefinition> getAvailableGames() {
+    public synchronized ArrayList<GameDefinition> getAvailableGames() {
         ArrayList<GameDefinition> reachable = new ArrayList<>();
         for (GameDefinition game : gamesConfig.getAvailable()) {
             if (isReachable(game.getHealthUrl())) {
