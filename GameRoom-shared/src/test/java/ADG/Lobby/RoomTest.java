@@ -125,44 +125,86 @@ class RoomTest {
 
     // ── equality ─────────────────────────────────────────────────────────────
 
-    @Test
-    void equalRoomsHaveSameNameStatusAndPlayerIds() {
+    private Room buildIdenticalRoom() {
         Room other = new Room();
+        other.setId("room-1");
         other.setName("Test Room");
+        other.setCreatedByUserId("creator-1");
         other.setStatus(GameStatus.WAITING);
-        assertEquals(room, other);
+        return other;
+    }
+
+    @Test
+    void identicalRoomsAreEqual() {
+        assertEquals(room, buildIdenticalRoom());
+    }
+
+    @Test
+    void equalRoomsHaveSameHashCode() {
+        assertEquals(room.hashCode(), buildIdenticalRoom().hashCode());
+    }
+
+    @Test
+    void roomsDifferById() {
+        Room other = buildIdenticalRoom();
+        other.setId("other-id");
+        assertNotEquals(room, other);
     }
 
     @Test
     void roomsDifferByName() {
-        Room other = new Room();
+        Room other = buildIdenticalRoom();
         other.setName("Other Room");
-        other.setStatus(GameStatus.WAITING);
         assertNotEquals(room, other);
     }
 
     @Test
     void roomsDifferByStatus() {
-        Room other = new Room();
-        other.setName("Test Room");
+        Room other = buildIdenticalRoom();
         other.setStatus(GameStatus.PLAYING);
         assertNotEquals(room, other);
     }
 
     @Test
     void roomsDifferByPlayerIds() {
-        Room other = new Room();
-        other.setName("Test Room");
-        other.setStatus(GameStatus.WAITING);
+        Room other = buildIdenticalRoom();
         other.addPlayer("p1");
         assertNotEquals(room, other);
     }
 
     @Test
-    void equalRoomsHaveSameHashCode() {
-        Room other = new Room();
-        other.setName("Test Room");
-        other.setStatus(GameStatus.WAITING);
-        assertEquals(room.hashCode(), other.hashCode());
+    void roomsDifferByGameId() {
+        Room other = buildIdenticalRoom();
+        other.setGameId("other-game");
+        assertNotEquals(room, other);
+    }
+
+    @Test
+    void roomsDifferByMinPlayers() {
+        Room other = buildIdenticalRoom();
+        other.setMinPlayers(4);
+        assertNotEquals(room, other);
+    }
+
+    @Test
+    void roomsDifferByMaxPlayers() {
+        Room other = buildIdenticalRoom();
+        other.setMaxPlayers(4);
+        assertNotEquals(room, other);
+    }
+
+    @Test
+    void roomsDifferByPlayerNames() {
+        Room other = buildIdenticalRoom();
+        other.addPlayer("p1");
+        other.addPlayerName("p1", "Alice");
+        assertNotEquals(room, other);
+    }
+
+    @Test
+    void roomsDifferByCreatedByUserId() {
+        Room other = buildIdenticalRoom();
+        other.setCreatedByUserId("other-creator");
+        assertNotEquals(room, other);
     }
 }

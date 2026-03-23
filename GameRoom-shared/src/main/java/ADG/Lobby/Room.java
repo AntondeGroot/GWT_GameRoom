@@ -148,12 +148,25 @@ public class Room implements IsSerializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Room room = (Room) o;
-        return Objects.equals(name, room.name) && Objects.equals(status, room.status) && Objects.equals(playerIds, room.playerIds);
+        return minPlayers == room.minPlayers
+                && maxPlayers == room.maxPlayers
+                && uniqueProfilePics == room.uniqueProfilePics
+                && Objects.equals(id, room.id)
+                && Objects.equals(createdByUserId, room.createdByUserId)
+                && Objects.equals(name, room.name)
+                && Objects.equals(status, room.status)
+                && Objects.equals(playerIds, room.playerIds)
+                && Objects.equals(playerNames, room.playerNames)
+                && Objects.equals(playerProfiles, room.playerProfiles)
+                && Objects.equals(gameId, room.gameId)
+                && Objects.equals(gameSessionId, room.gameSessionId)
+                && Objects.equals(gameBaseUrl, room.gameBaseUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, status, playerIds);
+        return Objects.hash(id, createdByUserId, name, status, playerIds, playerNames,
+                playerProfiles, gameId, gameSessionId, gameBaseUrl, minPlayers, maxPlayers, uniqueProfilePics);
     }
 
     @Override
