@@ -28,6 +28,7 @@ public class CharacterSelectionView extends Composite {
 
     public CharacterSelectionView() {
         initWidget(uiBinder.createAndBindUi(this));
+        usernameInput.setMaxLength(10);
     }
 
     public TextBox getUsernameInput() {
