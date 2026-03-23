@@ -10,6 +10,13 @@
                             text="Unique profile pictures"
                             styleName="game-options-checkbox"/>
             </g:FlowPanel>
+            <g:FlowPanel ui:field="maxPlayersField" styleName="game-options-field-inline">
+                <g:Label text="Maximum number of players" styleName="game-options-label"/>
+                <g:FlowPanel styleName="game-options-number-row">
+                    <g:TextBox ui:field="maxPlayersInput" styleName="game-options-number-input"/>
+                    <g:Label ui:field="maxPlayersRangeHint" styleName="game-options-range-hint"/>
+                </g:FlowPanel>
+            </g:FlowPanel>
         </g:FlowPanel>
         <g:FlowPanel styleName="game-options-actions">
             <g:Button ui:field="cancelButton" text="Cancel" stylePrimaryName="cancelButton"/>

@@ -252,6 +252,47 @@ td, th, span, p, div, label {
   cursor: pointer;
 }
 
+.game-options-field-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.game-options-label {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.game-options-number-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-options-number-input {
+  width: 64px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+.game-options-number-input:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.game-options-range-hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
 .game-options-actions {
   display: flex;
   gap: 32px;

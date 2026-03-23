@@ -36,6 +36,12 @@ public class GameOptionsPresenter implements Presenter {
     }
 
     private void onConfirm() {
+        int maxPlayers = view.getMaxPlayers();
+        if (maxPlayers < view.getMinBound() || maxPlayers > view.getMaxBound()) {
+            Window.alert("Maximum players must be between " + view.getMinBound() + " and " + view.getMaxBound() + ".");
+            return;
+        }
+        room.setMaxPlayers(maxPlayers);
         room.setUniqueProfilePics(view.isUniqueProfilePics());
         // Persist the options to the server before proceeding, so joining players see them
         roomService.updateRoom(room, new AsyncCallback<Void>() {
