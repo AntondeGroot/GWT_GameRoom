@@ -3,6 +3,7 @@ package ADG.Lobby;
 import ADG.Presenter;
 import ADG.PresenterManager;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GameOptionsPresenter implements Presenter {
@@ -37,7 +38,9 @@ public class GameOptionsPresenter implements Presenter {
         room.setUniqueProfilePics(view.isUniqueProfilePics());
         // Persist the options to the server before proceeding, so joining players see them
         roomService.updateRoom(room, new AsyncCallback<Void>() {
-            @Override public void onFailure(Throwable t) {}
+            @Override public void onFailure(Throwable t) {
+                Window.alert("Failed to save room options: " + t.getMessage());
+            }
             @Override public void onSuccess(Void v) {
                 presenterManager.switchToCharacterSelection(room);
             }

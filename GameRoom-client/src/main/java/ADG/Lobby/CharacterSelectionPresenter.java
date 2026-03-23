@@ -2,6 +2,7 @@ package ADG.Lobby;
 
 import ADG.*;
 import ADG.Utils.Cookie;
+import ADG.Utils.PollingService;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -20,14 +21,17 @@ public class CharacterSelectionPresenter implements Presenter {
     private static final int[] EXCLUDED_INDICES = {5, 9};
     private static final int SPRITE_SIZE = 100;
     private static final String SPRITE_SHEET_URL = "/profilepics.png";
+    private static final int POLLING_INTERVAL_MS = 500;
 
     private final RoomServiceAsync roomService;
     private final CharacterSelectionView view;
     private final Room room;
     private final PresenterManager presenterManager;
     private int selectedProfileIndex = -1;
+    private Canvas[] canvases = new Canvas[SPRITE_SHEET_TOTAL];
     private HandlerRegistration confirmReg;
     private HandlerRegistration cancelReg;
+    private final PollingService pollingService = new PollingService();
 
     public CharacterSelectionPresenter(CharacterSelectionView view, Room room, PresenterManager presenterManager, RoomServiceAsync roomService) {
         this.view = view;
@@ -41,19 +45,53 @@ public class CharacterSelectionPresenter implements Presenter {
         History.newItem("joining=" + room.getId());
         confirmReg = view.getConfirmButton().addClickHandler(event -> onConfirm());
         cancelReg  = view.getCancelButton().addClickHandler(event -> onBackToLobby());
+        selectedProfileIndex = -1;
+        view.getSelectedProfileLabel().setText("No profile picture selected");
         loadProfilePictures();
+        if (room.isUniqueProfilePics()) {
+            pollingService.startPolling(POLLING_INTERVAL_MS, this::pollServerForProfileUpdates);
+        }
     }
 
     @Override
     public void stop() {
+        pollingService.stopPolling();
         if (confirmReg != null) { confirmReg.removeHandler(); confirmReg = null; }
         if (cancelReg  != null) { cancelReg.removeHandler();  cancelReg  = null; }
     }
 
+    private void pollServerForProfileUpdates() {
+        roomService.getRoomById(room.getId(), new AsyncCallback<Room>() {
+            @Override
+            public void onFailure(Throwable t) {}
+
+            @Override
+            public void onSuccess(Room updatedRoom) {
+                if (updatedRoom == null) {
+                    pollingService.stopPolling();
+                    presenterManager.switchToLobby();
+                    return;
+                }
+                if (!updatedRoom.getPlayerProfiles().equals(room.getPlayerProfiles())) {
+                    boolean selectionTaken = selectedProfileIndex != -1
+                            && updatedRoom.getPlayerProfiles().values()
+                                         .contains(String.valueOf(selectedProfileIndex));
+                    room.getPlayerProfiles().clear();
+                    room.getPlayerProfiles().putAll(updatedRoom.getPlayerProfiles());
+                    if (selectionTaken) {
+                        selectedProfileIndex = -1;
+                        view.getSelectedProfileLabel().setText("No profile picture selected");
+                        view.showAlert("Your selected profile was taken by another player.");
+                    }
+                    loadProfilePictures();
+                }
+            }
+        });
+    }
+
     private void loadProfilePictures() {
         view.getProfilePicGrid().clear();
-        selectedProfileIndex = -1;
-        view.getSelectedProfileLabel().setText("No profile picture selected");
+        canvases = new Canvas[SPRITE_SHEET_TOTAL];
 
         Set<Integer> takenIndices = new HashSet<>();
         if (room.isUniqueProfilePics()) {
@@ -62,7 +100,6 @@ public class CharacterSelectionPresenter implements Presenter {
             }
         }
 
-        Canvas[] canvases = new Canvas[SPRITE_SHEET_TOTAL];
         for (int i = 0; i < SPRITE_SHEET_TOTAL; i++) {
             if (isExcluded(i)) continue;
             final int spriteIndex = i;
@@ -102,6 +139,10 @@ public class CharacterSelectionPresenter implements Presenter {
                     ctx.setTextBaseline("middle");
                     ctx.fillText("\u2715", SPRITE_SIZE / 2.0, SPRITE_SIZE / 2.0);
                 }
+            }
+            // Re-apply selection highlight after redraw
+            if (selectedProfileIndex != -1 && canvases[selectedProfileIndex] != null) {
+                canvases[selectedProfileIndex].addStyleName("profile-pic-selected");
             }
         });
         img.setUrl(SPRITE_SHEET_URL);
@@ -145,7 +186,9 @@ public class CharacterSelectionPresenter implements Presenter {
 
         if (isCreator()) {
             roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
-                @Override public void onFailure(Throwable t) {}
+                @Override public void onFailure(Throwable t) {
+                    view.showAlert("Failed to join room: " + t.getMessage());
+                }
                 @Override public void onSuccess(Void v) {}
             });
             roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
@@ -154,7 +197,9 @@ public class CharacterSelectionPresenter implements Presenter {
                 }
                 @Override public void onSuccess(Void unused) {
                     roomService.publishRoom(room.getId(), new AsyncCallback<Void>() {
-                        @Override public void onFailure(Throwable t) {}
+                        @Override public void onFailure(Throwable t) {
+                            view.showAlert("Failed to open room: " + t.getMessage());
+                        }
                         @Override public void onSuccess(Void v) {
                             presenterManager.switchToGameRoom(room);
                         }
@@ -163,7 +208,9 @@ public class CharacterSelectionPresenter implements Presenter {
             });
         } else {
             roomService.setUsernameAndProfile(room, Cookie.getPlayerId(), username, String.valueOf(selectedProfileIndex), new AsyncCallback<Void>() {
-                @Override public void onFailure(Throwable t) {}
+                @Override public void onFailure(Throwable t) {
+                    view.showAlert("Failed to set profile: " + t.getMessage());
+                }
                 @Override public void onSuccess(Void unused) {
                     presenterManager.switchToGameRoom(room);
                 }
