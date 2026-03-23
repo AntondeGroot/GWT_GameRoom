@@ -108,6 +108,10 @@ h1 {
   padding: 8px;
 }
 
+.characterPanel td {
+  text-align: center;
+}
+
 /* =============================================
    GWT Element Overrides
    ============================================= */
@@ -537,6 +541,37 @@ td, th, span, p, div, label {
 /* =============================================
    Profile Pictures
    ============================================= */
+.steps-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 8px auto;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 8px 0;
+}
+
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #f97316;
+  color: #f97316;
+  font-size: 1rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
 .profile-pic-grid {
   display: flex;
   flex-wrap: wrap;
@@ -566,9 +601,14 @@ td, th, span, p, div, label {
 }
 
 .profile-pic-selected {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-glow), var(--shadow-md);
+  border: 2px solid #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 18px rgba(249, 115, 22, 0.55);
   transform: scale(1.08);
+}
+
+.profile-pic-selected:hover {
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.75), 0 0 18px rgba(249, 115, 22, 0.55);
 }
 
 .profile-pic-taken {

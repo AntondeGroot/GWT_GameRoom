@@ -21,6 +21,10 @@ public class GameOptionsView extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
     }
 
+    public void init(Room room) {
+        uniqueProfilePicsCheckbox.setValue(room.isUniqueProfilePics());
+    }
+
     public boolean isUniqueProfilePics() { return uniqueProfilePicsCheckbox.getValue(); }
     public Button getConfirmButton()     { return confirmButton; }
     public Button getCancelButton()      { return cancelButton; }

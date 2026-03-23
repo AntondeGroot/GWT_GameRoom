@@ -24,6 +24,7 @@ public class GameOptionsPresenter implements Presenter {
 
     @Override
     public void start() {
+        view.init(room);
         confirmReg = view.getConfirmButton().addClickHandler(e -> onConfirm());
         cancelReg  = view.getCancelButton().addClickHandler(e -> onCancel());
     }

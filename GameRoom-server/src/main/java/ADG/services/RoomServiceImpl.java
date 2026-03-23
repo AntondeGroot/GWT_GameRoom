@@ -35,15 +35,14 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @PostConstruct
     private void seedTestRoom() {
-        // Valid profile indices (0-15, excluding 5 and 9)
         String[][] players = {
             {"Alice",   "0"},
-            {"Bob",     "3"},
-            {"Charlie", "6"},
-            {"Diana",   "1"},
-            {"Eve",     "12"},
-            {"Frank",   "8"},
-            {"Grace",   "14"},
+            {"Bob",     "15"},
+            {"Charlie", "21"},
+            {"Diana",   "23"},
+            {"Eve",     "47"},
+            {"Frank",   "52"},
+            {"Grace",   "59"},
         };
 
         Room room = new Room();
