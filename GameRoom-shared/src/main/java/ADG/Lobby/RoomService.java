@@ -11,7 +11,7 @@ public interface RoomService extends RemoteService {
     ArrayList<Room> getRooms();
     Room getRoomById(String roomId);
     Room createRoom(Room room) throws IllegalArgumentException;
-    void deleteRoom(String roomName);
+    void deleteRoom(String roomId);
     void updateRoom(Room room);
     void addPlayerIdToRoom(String playerId, Room room);
     void removePlayerFromRoom(String playerId, Room room);

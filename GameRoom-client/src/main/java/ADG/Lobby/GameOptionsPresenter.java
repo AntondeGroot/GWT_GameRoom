@@ -49,7 +49,7 @@ public class GameOptionsPresenter implements Presenter {
 
     private void onCancel() {
         // Room was created as PENDING when the user clicked "Create Room" — clean it up
-        roomService.deleteRoom(room.getName(), new AsyncCallback<Void>() {
+        roomService.deleteRoom(room.getId(), new AsyncCallback<Void>() {
             @Override public void onFailure(Throwable t) {}
             @Override public void onSuccess(Void v) {}
         });

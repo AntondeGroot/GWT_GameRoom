@@ -114,8 +114,8 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     }
 
     @Override
-    public synchronized void deleteRoom(String roomName) {
-        Optional<Room> result = rooms.stream().filter(room -> room.getName().equals(roomName)).findFirst();
+    public synchronized void deleteRoom(String roomId) {
+        Optional<Room> result = rooms.stream().filter(room -> room.getId().equals(roomId)).findFirst();
         if(result.isPresent()) {
             Room foundRoom = result.get();
             rooms.remove(foundRoom);
@@ -124,7 +124,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
 
     @Override
     public synchronized void updateRoom(Room room){
-        Optional<Room> result = rooms.stream().filter(r -> r.getName().equals(room.getName())).findFirst();
+        Optional<Room> result = rooms.stream().filter(r -> r.getId().equals(room.getId())).findFirst();
         if(result.isPresent()) {
             Room foundRoom = result.get();
             rooms.remove(foundRoom);
@@ -135,11 +135,11 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     @Override
     public synchronized void addPlayerIdToRoom(String playerId, Room room) {
         boolean alreadyInAnotherRoom = rooms.stream()
-                .anyMatch(r -> !r.getName().equals(room.getName()) && r.getPlayerIds().contains(playerId));
+                .anyMatch(r -> !r.getId().equals(room.getId()) && r.getPlayerIds().contains(playerId));
         if (alreadyInAnotherRoom) return;
 
         for (Room room1 : rooms) {
-            if (room1.getName().equals(room.getName())) {
+            if (room1.getId().equals(room.getId())) {
                 room1.addPlayer(playerId);
                 if (room1.getNrOfPlayers() >= room1.getMaxPlayers()) {
                     room1.setStatus(GameStatus.FULL);
@@ -151,7 +151,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     @Override
     public synchronized void removePlayerFromRoom(String playerId, Room room) {
         for (Room room1 : rooms) {
-            if (room1.getName().equals(room.getName())) {
+            if (room1.getId().equals(room.getId())) {
                 room1.removePlayer(playerId);
                 if (room1.getStatus() == GameStatus.FULL && room1.getNrOfPlayers() < room1.getMaxPlayers()) {
                     room1.setStatus(GameStatus.WAITING);
@@ -167,7 +167,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
     @Override
     public synchronized void setUsernameAndProfile(Room room, String userId, String username, String profileId) {
         for (Room room1 : rooms) {
-            if (room1.getName().equals(room.getName())) {
+            if (room1.getId().equals(room.getId())) {
                 room1.addPlayerName(userId, username);
                 room1.addPlayerProfile(userId, profileId);
             }

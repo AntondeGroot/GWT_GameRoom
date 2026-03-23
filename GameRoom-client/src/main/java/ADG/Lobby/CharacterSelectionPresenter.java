@@ -220,7 +220,7 @@ public class CharacterSelectionPresenter implements Presenter {
 
     private void onBackToLobby() {
         if (isCreator()) {
-            roomService.deleteRoom(room.getName(), new AsyncCallback<Void>() {
+            roomService.deleteRoom(room.getId(), new AsyncCallback<Void>() {
                 @Override public void onFailure(Throwable t) {}
                 @Override public void onSuccess(Void v) {}
             });

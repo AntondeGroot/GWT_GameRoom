@@ -229,13 +229,13 @@ class RoomServiceImplTest {
     void deleteRoomRemovesIt() {
         Room room = buildRoom("Alpha");
         service.createRoom(room);
-        service.deleteRoom("Alpha");
+        service.deleteRoom(room.getId());
         assertTrue(service.getRooms().isEmpty());
     }
 
     @Test
     void deleteNonExistentRoomIsNoOp() {
-        service.deleteRoom("nobody");
+        service.deleteRoom("non-existent-id");
         assertTrue(service.getRooms().isEmpty());
     }
 
@@ -243,12 +243,12 @@ class RoomServiceImplTest {
 
     @Test
     void updateRoomReplacesExisting() {
-        Room original = buildRoom("Alpha");
-        service.createRoom(original);
+        Room room = buildRoom("Alpha");
+        service.createRoom(room);
+        service.publishRoom(room.getId());
 
-        Room updated = buildRoom("Alpha"); // same name → same identity
-        updated.setUniqueProfilePics(true);
-        service.updateRoom(updated);
+        room.setUniqueProfilePics(true);
+        service.updateRoom(room);
 
         assertEquals(1, service.getRooms().size());
         assertTrue(service.getRooms().get(0).isUniqueProfilePics());
