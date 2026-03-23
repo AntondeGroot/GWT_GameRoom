@@ -103,7 +103,7 @@ public class LobbyPresenter implements Presenter {
     }
 
     private void addPlayerIdToRoom(Room room){
-        roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room.getId(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GWT.log("Failed to add user to room");

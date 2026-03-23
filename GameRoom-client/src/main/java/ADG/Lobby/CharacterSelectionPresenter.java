@@ -185,7 +185,7 @@ public class CharacterSelectionPresenter implements Presenter {
         }
 
         if (isCreator()) {
-            roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+            roomService.addPlayerIdToRoom(Cookie.getPlayerId(), room.getId(), new AsyncCallback<Void>() {
                 @Override public void onFailure(Throwable t) {
                     view.showAlert("Failed to join room: " + t.getMessage());
                 }
@@ -225,7 +225,7 @@ public class CharacterSelectionPresenter implements Presenter {
                 @Override public void onSuccess(Void v) {}
             });
         } else {
-            roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+            roomService.removePlayerFromRoom(Cookie.getPlayerId(), room.getId(), new AsyncCallback<Void>() {
                 @Override public void onFailure(Throwable throwable) {}
                 @Override public void onSuccess(Void v) {}
             });

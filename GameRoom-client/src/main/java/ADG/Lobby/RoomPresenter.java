@@ -215,7 +215,7 @@ public class RoomPresenter implements Presenter {
     }
 
     private void removePlayerFromRoom() {
-        roomService.removePlayerFromRoom(Cookie.getPlayerId(), room, new AsyncCallback<Void>() {
+        roomService.removePlayerFromRoom(Cookie.getPlayerId(), room.getId(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
             }
