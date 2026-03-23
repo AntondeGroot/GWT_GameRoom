@@ -149,6 +149,11 @@ public class RoomPresenter implements Presenter {
 
             @Override
             public void onSuccess(Room updatedRoom) {
+                if (updatedRoom == null) {
+                    stop();
+                    presenterManager.switchToLobby();
+                    return;
+                }
                 if (updatedRoom.getStatus() == GameStatus.PLAYING && updatedRoom.getGameSessionId() != null) {
                     stop();
                     String url = updatedRoom.getGameBaseUrl()
