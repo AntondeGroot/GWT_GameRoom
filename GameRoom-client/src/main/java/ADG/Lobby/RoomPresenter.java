@@ -183,7 +183,14 @@ public class RoomPresenter implements Presenter {
                 @Override
                 public void onResponseReceived(Request req, Response res) {
                     if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) return;
-                    JSONArray arr = JSONParser.parseStrict(res.getText()).isArray();
+                    JSONValue parsed;
+                    try {
+                        parsed = JSONParser.parseStrict(res.getText());
+                    } catch (JSONException e) {
+                        GWT.log("chat poll: invalid JSON response: " + e.getMessage());
+                        return;
+                    }
+                    JSONArray arr = parsed.isArray();
                     if (arr == null || arr.size() == chatMessageCount) return;
                     chatMessageCount = arr.size();
                     ArrayList<Message> decrypted = new ArrayList<>();
