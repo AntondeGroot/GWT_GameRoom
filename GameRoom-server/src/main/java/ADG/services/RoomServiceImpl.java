@@ -216,7 +216,11 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                     for (Map.Entry<String, String> entry : room1.getPlayerNames().entrySet()) {
                         String playerId = entry.getKey();
                         String playerName = entry.getValue();
-                        String profilePic = room1.getPlayerProfiles().get(playerId);
+                        String profilePicStr = room1.getPlayerProfiles().get(playerId);
+                        int profilePic = 0;
+                        if (profilePicStr != null) {
+                            try { profilePic = Integer.parseInt(profilePicStr); } catch (NumberFormatException ignored) {}
+                        }
                         Map<String, Object> playerRequest = new HashMap<>();
                         playerRequest.put("id", playerId);
                         playerRequest.put("name", playerName);
