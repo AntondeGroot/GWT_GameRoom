@@ -11,7 +11,7 @@
                 <g:FlowPanel styleName="create-room-fields">
                     <g:FlowPanel styleName="create-room-field">
                         <g:Label text="Room Name" styleName="create-room-label"/>
-                        <g:TextBox ui:field="roomNameInput" styleName="create-room-input"/>
+                        <g:TextBox ui:field="roomNameInput" styleName="create-room-input" maxLength="20"/>
                     </g:FlowPanel>
                     <g:FlowPanel styleName="create-room-field">
                         <g:Label text="Select Game" styleName="create-room-label"/>
