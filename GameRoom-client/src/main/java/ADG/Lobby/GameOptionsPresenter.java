@@ -2,6 +2,7 @@ package ADG.Lobby;
 
 import ADG.Presenter;
 import ADG.PresenterManager;
+import ADG.audio.AudioPlayer;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,8 +26,8 @@ public class GameOptionsPresenter implements Presenter {
     @Override
     public void start() {
         view.init(room);
-        confirmReg = view.getConfirmButton().addClickHandler(e -> onConfirm());
-        cancelReg  = view.getCancelButton().addClickHandler(e -> onCancel());
+        confirmReg = view.getConfirmButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onConfirm(); });
+        cancelReg  = view.getCancelButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onCancel(); });
     }
 
     @Override

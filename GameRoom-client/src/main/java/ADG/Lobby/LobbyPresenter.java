@@ -2,6 +2,7 @@ package ADG.Lobby;
 
 import ADG.*;
 import ADG.Utils.Cookie;
+import ADG.audio.AudioPlayer;
 import ADG.Utils.PollingService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
@@ -43,17 +44,18 @@ public class LobbyPresenter implements Presenter {
         view.getCreateRoomButton().addClickHandler(event -> {
             String roomName = view.getRoomNameInput().getText().trim();
             if (roomName.isEmpty()) {
-                view.showAlert("Room name cannot be empty.");
+                AudioPlayer.errorAlert("Room name cannot be empty.");
                 return;
             }
             if (roomName.length() < 3) {
-                view.showAlert("Room name must be at least 3 characters.");
+                AudioPlayer.errorAlert("Room name must be at least 3 characters.");
                 return;
             }
             if (roomName.length() > 20) {
-                view.showAlert("Room name cannot exceed 20 characters.");
+                AudioPlayer.errorAlert("Room name cannot exceed 20 characters.");
                 return;
             }
+            AudioPlayer.play(AudioPlayer.BUTTON_CLICK);
             createRoom(roomName);
         });
         view.setJoinHandler(room -> {
@@ -137,14 +139,14 @@ public class LobbyPresenter implements Presenter {
     private void createRoom(String roomName) {
         String gameId = view.getSelectedGameId();
         if (gameId == null) {
-            view.showAlert("Please select a game.");
+            AudioPlayer.errorAlert("Please select a game.");
             return;
         }
         // Fast client-side check against cached list before hitting the server
         boolean nameExists = rooms.stream()
                 .anyMatch(r -> r.getName().equalsIgnoreCase(roomName));
         if (nameExists) {
-            view.showAlert("A room with this name already exists.");
+            AudioPlayer.errorAlert("A room with this name already exists.");
             return;
         }
         String playerId = Cookie.getPlayerId();
