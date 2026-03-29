@@ -1,5 +1,6 @@
 package ADG.Lobby;
 
+import ADG.audio.AudioPlayer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -117,12 +118,12 @@ public class LobbyView extends Composite {
         if (isMember) {
             Button rejoinBtn = new Button("Rejoin");
             rejoinBtn.setStylePrimaryName("joinRoomButton");
-            rejoinBtn.addClickHandler(e -> { if (joinHandler != null) joinHandler.onJoin(room); });
+            rejoinBtn.addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); if (joinHandler != null) joinHandler.onJoin(room); });
             actionCell.add(rejoinBtn);
         } else if (GameStatus.WAITING.equals(room.getStatus())) {
             Button joinBtn = new Button("Join");
             joinBtn.setStylePrimaryName("joinRoomButton");
-            joinBtn.addClickHandler(e -> { if (joinHandler != null) joinHandler.onJoin(room); });
+            joinBtn.addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); if (joinHandler != null) joinHandler.onJoin(room); });
             actionCell.add(joinBtn);
         }
         row.add(actionCell);

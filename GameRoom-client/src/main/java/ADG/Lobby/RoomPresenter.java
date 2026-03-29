@@ -1,6 +1,7 @@
 package ADG.Lobby;
 
 import ADG.*;
+import ADG.audio.AudioPlayer;
 import ADG.Utils.ChatCipher;
 import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
@@ -28,6 +29,7 @@ public class RoomPresenter implements Presenter {
     private final PresenterManager presenterManager;
     private HashMap<String, String> userNames = new HashMap<>();
     private HashMap<String, String> userProfiles = new HashMap<>();
+    private boolean playerListInitialized = false;
     private final PollingService pollingService = new PollingService();
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
@@ -41,6 +43,7 @@ public class RoomPresenter implements Presenter {
     @Override
     public void start() {
         History.newItem("room=" + room.getId());
+        AudioPlayer.play(AudioPlayer.PLAYER_ENTER);
         bind();
         pollingService.startPolling(500, this::pollServerForUpdates);
     }
@@ -56,10 +59,10 @@ public class RoomPresenter implements Presenter {
         roomView.showRoomName(room.getName());
         roomView.refreshPlayerList(new HashMap<>(), new HashMap<>());
         roomView.refreshMessages(new ArrayList<>());
-        handlerRegistrations.add(roomView.getLeaveRoomButton().addClickHandler(event -> leaveRoom()));
-        handlerRegistrations.add(roomView.getDeleteRoomButton().addClickHandler(event -> deleteRoom()));
-        handlerRegistrations.add(roomView.getStartGameButton().addClickHandler(event -> startGame()));
-        handlerRegistrations.add(roomView.getSendMessageButton().addClickHandler(event -> sendMessage()));
+        handlerRegistrations.add(roomView.getLeaveRoomButton().addClickHandler(event -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); leaveRoom(); }));
+        handlerRegistrations.add(roomView.getDeleteRoomButton().addClickHandler(event -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); deleteRoom(); }));
+        handlerRegistrations.add(roomView.getStartGameButton().addClickHandler(event -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); startGame(); }));
+        handlerRegistrations.add(roomView.getSendMessageButton().addClickHandler(event -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); sendMessage(); }));
         handlerRegistrations.add(roomView.getMessageInputField().addKeyDownHandler(event -> {
             if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
                 sendMessage();
@@ -165,9 +168,15 @@ public class RoomPresenter implements Presenter {
                 HashMap<String, String> serverUserNames = updatedRoom.getPlayerNames();
                 HashMap<String, String> serverUserProfiles = updatedRoom.getPlayerProfiles();
                 if (!serverUserNames.equals(userNames) || !serverUserProfiles.equals(userProfiles)) {
+                    if (playerListInitialized && serverUserNames.size() > userNames.size()) {
+                        AudioPlayer.play(AudioPlayer.PLAYER_ENTER);
+                    }
+                    playerListInitialized = true;
                     userNames = serverUserNames;
                     userProfiles = serverUserProfiles;
                     roomView.refreshPlayerList(userNames, userProfiles);
+                } else {
+                    playerListInitialized = true;
                 }
                 roomView.updateCreatorControls(updatedRoom);
             }

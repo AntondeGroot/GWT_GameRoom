@@ -1,6 +1,7 @@
 package ADG.Lobby;
 
 import ADG.*;
+import ADG.audio.AudioPlayer;
 import ADG.Utils.Cookie;
 import ADG.Utils.PollingService;
 import com.google.gwt.canvas.client.Canvas;
@@ -43,7 +44,7 @@ public class CharacterSelectionPresenter implements Presenter {
     public void start() {
         History.newItem("joining=" + room.getId());
         confirmReg = view.getConfirmButton().addClickHandler(event -> onConfirm());
-        cancelReg  = view.getCancelButton().addClickHandler(event -> onBackToLobby());
+        cancelReg  = view.getCancelButton().addClickHandler(event -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onBackToLobby(); });
         selectedProfileIndex = -1;
         view.getSelectedProfileLabel().setText("No profile picture selected");
         view.getUsernameInput().setText(ADG.Utils.Cookie.getUsername());
@@ -184,13 +185,14 @@ public class CharacterSelectionPresenter implements Presenter {
     private void onConfirm() {
         String username = view.getUsernameInput().getText().trim();
         if (username.isEmpty()) {
-            view.showAlert("Please enter a username.");
+            AudioPlayer.errorAlert("Please enter a username.");
             return;
         }
         if (selectedProfileIndex == -1) {
-            view.showAlert("Please select a profile picture.");
+            AudioPlayer.errorAlert("Please select a profile picture.");
             return;
         }
+        AudioPlayer.play(AudioPlayer.BUTTON_CLICK);
 
         Cookie.setUsername(username);
 
