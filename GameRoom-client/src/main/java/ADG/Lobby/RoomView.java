@@ -8,8 +8,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RoomView extends Composite {
 
@@ -58,7 +58,7 @@ public class RoomView extends Composite {
     public TextBox getMessageInputField() { return messageInputField; }
     public Button getSendMessageButton() { return sendMessageButton; }
 
-    public void refreshPlayerList(HashMap<String, String> userNames, HashMap<String, String> userProfiles) {
+    public void refreshPlayerList(Map<String, String> userNames, Map<String, String> userProfiles) {
         StringBuilder json = new StringBuilder("[");
         boolean first = true;
         for (String userId : userNames.keySet()) {
@@ -317,21 +317,23 @@ public class RoomView extends Composite {
                 int missing = room.getMinPlayers() - room.getPlayerNames().size();
                 startInfoLabel.setText("Waiting for " + missing + " more player" + (missing == 1 ? "" : "s") + " to join.");
                 startInfoLabel.setStyleName("startInfoLabel startInfoLabel-waiting");
+                startInfoLabel.setVisible(true);
             } else {
-                startInfoLabel.setText("");
+                startInfoLabel.setVisible(false);
             }
         } else {
             String creatorName = room.getPlayerNames().get(room.getCreatedByUserId());
             if (creatorName == null) creatorName = "the host";
             startInfoLabel.setText(creatorName + " will start the game.");
             startInfoLabel.setStyleName("startInfoLabel startInfoLabel-waiting");
+            startInfoLabel.setVisible(true);
         }
 
         deleteRoomButton.setEnabled(isCreator);
         deleteRoomButton.setVisible(isCreator);
     }
 
-    public void refreshMessages(ArrayList<Message> messages) {
+    public void refreshMessages(List<Message> messages) {
         StringBuilder output = new StringBuilder();
         String lastTimeStamp = "";
         for (Message message : messages) {
