@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
@@ -84,6 +85,24 @@ public class GameOptionsView extends Composite {
                 cb.addStyleName("game-options-checkbox");
                 cb.setValue("true".equalsIgnoreCase(option.getDefaultValue()));
                 inputWidget = cb;
+            } else if (option.getChoices() != null && !option.getChoices().isEmpty()) {
+                Label lbl = new Label(option.getLabel());
+                lbl.addStyleName("game-options-label");
+                ListBox lb = new ListBox();
+                lb.addStyleName("game-options-select");
+                for (String choice : option.getChoices()) {
+                    lb.addItem(choice);
+                }
+                if (option.getDefaultValue() != null) {
+                    for (int i = 0; i < lb.getItemCount(); i++) {
+                        if (lb.getItemText(i).equals(option.getDefaultValue())) {
+                            lb.setSelectedIndex(i);
+                            break;
+                        }
+                    }
+                }
+                row.add(lbl);
+                inputWidget = lb;
             } else {
                 Label lbl = new Label(option.getLabel());
                 lbl.addStyleName("game-options-label");
@@ -114,6 +133,8 @@ public class GameOptionsView extends Composite {
             String value;
             if (w instanceof CheckBox) {
                 value = String.valueOf(((CheckBox) w).getValue());
+            } else if (w instanceof ListBox) {
+                value = ((ListBox) w).getSelectedItemText();
             } else {
                 value = ((TextBox) w).getText().trim();
             }

@@ -57,16 +57,8 @@ EOF"
 $SSH "sudo systemctl daemon-reload && sudo systemctl enable cloudflared && sudo systemctl start cloudflared"
 
 echo "📝 Writing games config..."
-$SSH "sudo tee /opt/gameroom/games.yaml > /dev/null << 'EOF'
-games:
-  available:
-    - id: keezen
-      name: Keezen
-      baseUrl: http://localhost:4200
-      healthUrl: http://localhost:80/keezen/
-      minPlayers: 2
-      maxPlayers: 8
-EOF"
+$SCP GameRoom-server/src/main/resources/games.yaml my-pi:/home/ubuntu/games.yaml
+$SSH "sudo mv /home/ubuntu/games.yaml /opt/gameroom/games.yaml"
 
 echo ""
 echo "✅ Pi setup complete."

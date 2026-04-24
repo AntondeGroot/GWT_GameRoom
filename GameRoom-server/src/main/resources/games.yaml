@@ -6,3 +6,9 @@ games:
       healthUrl: http://localhost:80/keezen/
       minPlayers: 2
       maxPlayers: 8
+    - id: qwixx
+      name: Qwixx
+      baseUrl: http://localhost:4300
+      healthUrl: http://localhost:80/qwixx/
+      minPlayers: 1
+      maxPlayers: 5

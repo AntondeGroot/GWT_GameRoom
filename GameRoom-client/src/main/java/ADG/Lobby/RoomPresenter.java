@@ -77,7 +77,7 @@ public class RoomPresenter implements Presenter {
         roomService.startGame(room.getId(), new AsyncCallback<Room>() {
             @Override
             public void onFailure(Throwable throwable) {
-                Window.alert("Failed to start game. Please try again.");
+                AudioPlayer.errorAlert(throwable.getMessage());
             }
 
             @Override

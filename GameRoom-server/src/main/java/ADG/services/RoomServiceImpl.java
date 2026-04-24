@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -246,13 +248,13 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
                     }
 
                     // 3. Start the game
-                    restTemplate.postForObject(baseUrl + "/games/" + sessionId + "/", null, Void.class);
+                    restTemplate.postForObject(baseUrl + "/games/" + sessionId, null, Void.class);
                 } catch (RestClientException e) {
                     // Attempt to clean up the orphaned session on the game server
                     try {
                         restTemplate.delete(baseUrl + "/games/" + sessionId);
                     } catch (RestClientException ignored) {}
-                    throw new IllegalArgumentException("Failed to start game session: " + e.getMessage());
+                    throw new IllegalArgumentException(extractErrorMessage(e));
                 }
 
                 // 4. Store session info and mark room as playing
@@ -314,6 +316,18 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         if ("false".equalsIgnoreCase(value)) return false;
         try { return Integer.parseInt(value); } catch (NumberFormatException ignored) {}
         return value;
+    }
+
+    private String extractErrorMessage(RestClientException e) {
+        if (e instanceof HttpClientErrorException hce) {
+            try {
+                Map<?, ?> body = new ObjectMapper().readValue(hce.getResponseBodyAsString(), Map.class);
+                Object msg = body.get("message");
+                if (msg != null) return msg.toString();
+            } catch (Exception ignored) {}
+            return hce.getStatusText();
+        }
+        return e.getMessage();
     }
 
     private boolean isReachable(String baseUrl) {
