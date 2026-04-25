@@ -2,6 +2,12 @@
 
 This project was written in GWT in order to get a better understanding of it, since this is used by my employer.
 
+# Games
+
+## Tock / Keezespel
+
+## Qwixx
+
 ## Local development
 
 1. Start the backend: `mvn spring-boot:run -pl *-server -am`
