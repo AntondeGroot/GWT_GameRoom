@@ -183,6 +183,7 @@ public class RoomView extends Composite {
         // width = imgW * displaySize / srcW  scales the sheet so srcW fills displaySize.
         nodeGroup.append('image')
             .attr('href', function(d) { return d.sheetUrl; })
+            .attr('preserveAspectRatio', 'none')
             .attr('x', function(d) { return -(d.srcX / d.srcW) * displaySize - R; })
             .attr('y', function(d) { return -(d.srcY / d.srcH) * displaySize - R; })
             .attr('width',  function(d) { return d.imgW * displaySize / d.srcW; })

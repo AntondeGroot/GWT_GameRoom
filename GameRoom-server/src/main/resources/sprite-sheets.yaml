@@ -24,7 +24,7 @@ sprite-sheets:
       rows: 4
       img-width: 1024
       img-height: 984
-      inset-px: 8
+      inset-px: 9
       exclude: [15]
 
     - url: /profilepics3.png
