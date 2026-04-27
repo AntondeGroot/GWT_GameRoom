@@ -2,6 +2,7 @@ package ADG.Utils;
 
 import ADG.UUID;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 
 import java.util.Collection;
 
@@ -18,7 +19,7 @@ public class Cookie {
     public static void createPlayerIdCookie(){
         Collection<String> cookieNames = Cookies.getCookieNames();
         if(!cookieNames.contains(PLAYERID)){
-            Cookies.setCookie(PLAYERID, UUID.get());
+            Cookies.setCookie(PLAYERID, UUID.get(), null, null, "/", isSecure());
         }
     }
 
@@ -28,6 +29,10 @@ public class Cookie {
     }
 
     public static void setUsername(String username) {
-        Cookies.setCookie(USERNAME, username);
+        Cookies.setCookie(USERNAME, username, null, null, "/", isSecure());
+    }
+
+    private static boolean isSecure() {
+        return Window.Location.getProtocol().startsWith("https");
     }
 }
