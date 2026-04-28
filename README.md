@@ -2,6 +2,8 @@
 
 This project was written in GWT in order to get a better understanding of it, since this is used by my employer.
 
+<img width="552" height="490" alt="image" src="https://github.com/user-attachments/assets/7035146e-9a82-42ae-85d1-6f7a33bca0a2" />
+
 # Games
 
 ## Tock / Keezenspel
