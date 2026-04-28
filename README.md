@@ -12,7 +12,7 @@ https://github.com/AntondeGroot/GWT_Keezenspel
 ## Qwixx
 https://github.com/AntondeGroot/Qwixx
 
-<img width="634" height="388" alt="image" src="https://github.com/user-attachments/assets/c0e45ab8-958e-4570-a303-cb2ba45c19c4" />
+<img width="317" height="194" alt="image" src="https://github.com/user-attachments/assets/c0e45ab8-958e-4570-a303-cb2ba45c19c4" />
 
 
 ## Local development
