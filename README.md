@@ -5,6 +5,10 @@ This project was written in GWT in order to get a better understanding of it, si
    <img width="500" alt="image" src="https://github.com/user-attachments/assets/7035146e-9a82-42ae-85d1-6f7a33bca0a2" />
 </p>
 
+<p align="center">
+   <img width="500" alt="image" src="https://github.com/user-attachments/assets/54ef3dde-b30c-47b6-9569-fbcff16861f3" />
+</p>
+
 # Games
 
 ## 1. Tock / Keezenspel
