@@ -209,7 +209,8 @@ public class RoomPresenter implements Presenter {
                     stop();
                     String url = updatedRoom.getGameBaseUrl()
                             + "/?sessionid=" + updatedRoom.getGameSessionId()
-                            + "&playerid=" + Cookie.getPlayerId();
+                            + "&playerid=" + Cookie.getPlayerId()
+                            + "&locale=" + Cookie.getLanguage().name();
                     Window.Location.replace(url);
                     return;
                 }
