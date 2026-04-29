@@ -8,6 +8,8 @@ public class GameOption implements IsSerializable {
     private String key;
     private String label;
     private String description;
+    private String labelKey;
+    private String descriptionKey;
     private String type;
     private String defaultValue;
     private ArrayList<String> choices;
@@ -24,6 +26,12 @@ public class GameOption implements IsSerializable {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getLabelKey() { return labelKey; }
+    public void setLabelKey(String labelKey) { this.labelKey = labelKey; }
+
+    public String getDescriptionKey() { return descriptionKey; }
+    public void setDescriptionKey(String descriptionKey) { this.descriptionKey = descriptionKey; }
 
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }

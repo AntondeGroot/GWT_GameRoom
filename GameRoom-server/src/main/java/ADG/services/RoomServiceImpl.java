@@ -111,6 +111,7 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         gamesConfig.findById(room.getGameId()).ifPresent(game -> {
             room.setMinPlayers(game.getMinPlayers());
             room.setMaxPlayers(game.getMaxPlayers());
+            room.setGameBaseUrl(game.getBaseUrl());
         });
         room.setStatus(GameStatus.PENDING);
         roomStore.rooms.add(room);
@@ -160,6 +161,10 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         Optional<Room> result = roomStore.rooms.stream().filter(r -> r.getId().equals(room.getId())).findFirst();
         if(result.isPresent()) {
             Room foundRoom = result.get();
+            // Preserve gameBaseUrl if not set on the incoming room
+            if ((room.getGameBaseUrl() == null || room.getGameBaseUrl().isBlank()) && foundRoom.getGameBaseUrl() != null) {
+                room.setGameBaseUrl(foundRoom.getGameBaseUrl());
+            }
             roomStore.rooms.remove(foundRoom);
             roomStore.rooms.add(room);
             logger.debug("Room {} updated successfully", room.getId());

@@ -2,6 +2,8 @@ package ADG.Lobby;
 
 import ADG.Presenter;
 import ADG.PresenterManager;
+import ADG.Utils.Cookie;
+import ADG.Utils.GameTranslations;
 import ADG.audio.AudioPlayer;
 import ADG.i18n.I18n;
 import com.google.gwt.core.client.GWT;
@@ -39,15 +41,41 @@ public class GameOptionsPresenter implements Presenter {
         confirmReg = view.getConfirmButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onConfirm(); });
         cancelReg  = view.getCancelButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onCancel(); });
         if (preloadedOptions != null) {
-            view.showGameSpecificOptions(preloadedOptions);
+            showOptionsAfterLoadingTranslations(preloadedOptions);
         } else if (room.getGameId() != null) {
             roomService.getGameOptions(room.getGameId(), new AsyncCallback<ArrayList<GameOption>>() {
                 @Override public void onFailure(Throwable t) {}
                 @Override public void onSuccess(ArrayList<GameOption> options) {
-                    view.showGameSpecificOptions(options);
+                    showOptionsAfterLoadingTranslations(options);
                 }
             });
         }
+    }
+
+    private void showOptionsAfterLoadingTranslations(ArrayList<GameOption> options) {
+        String baseUrl = room.getGameBaseUrl();
+
+        // If baseUrl is a localhost address (development), replace with current domain (deployment)
+        if (baseUrl != null && baseUrl.contains("localhost")) {
+            baseUrl = null;
+        }
+
+        if (baseUrl == null || baseUrl.isEmpty()) {
+            // Fallback: try to construct from window location
+            String origin = com.google.gwt.core.client.GWT.getModuleBaseURL();
+            if (origin.contains("/qwixx/")) {
+                baseUrl = origin.substring(0, origin.lastIndexOf("/qwixx/")) + "/qwixx";
+            } else {
+                // Secondary fallback: use /qwixx on the same domain (for different gameroom deployments)
+                String protocol = Window.Location.getProtocol();
+                String host = Window.Location.getHost();
+                baseUrl = protocol + "//" + host + "/qwixx";
+                GWT.log("Using secondary fallback baseUrl: " + baseUrl);
+            }
+        }
+        GameTranslations.load(baseUrl, Cookie.getLanguage(), () ->
+            view.showGameSpecificOptions(options)
+        );
     }
 
     @Override
