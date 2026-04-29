@@ -53,7 +53,21 @@ public class GameOptionsPresenter implements Presenter {
     }
 
     private void showOptionsAfterLoadingTranslations(ArrayList<GameOption> options) {
-        GameTranslations.load(room.getGameBaseUrl(), Cookie.getLanguage(), () ->
+        String baseUrl = room.getGameBaseUrl();
+        if (baseUrl == null || baseUrl.isEmpty()) {
+            // Fallback: try to construct from window location
+            // Assumes Qwixx is at /qwixx on the same domain
+            String origin = com.google.gwt.core.client.GWT.getModuleBaseURL();
+            if (origin.contains("/qwixx/")) {
+                baseUrl = origin.substring(0, origin.lastIndexOf("/qwixx/")) + "/qwixx";
+            } else {
+                // Last resort: just load without translations
+                GWT.log("Warning: Could not determine game base URL for translations");
+                view.showGameSpecificOptions(options);
+                return;
+            }
+        }
+        GameTranslations.load(baseUrl, Cookie.getLanguage(), () ->
             view.showGameSpecificOptions(options)
         );
     }
