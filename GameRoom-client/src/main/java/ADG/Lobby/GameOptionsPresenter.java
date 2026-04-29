@@ -2,6 +2,8 @@ package ADG.Lobby;
 
 import ADG.Presenter;
 import ADG.PresenterManager;
+import ADG.Utils.Cookie;
+import ADG.Utils.GameTranslations;
 import ADG.audio.AudioPlayer;
 import ADG.i18n.I18n;
 import com.google.gwt.core.client.GWT;
@@ -39,15 +41,21 @@ public class GameOptionsPresenter implements Presenter {
         confirmReg = view.getConfirmButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onConfirm(); });
         cancelReg  = view.getCancelButton().addClickHandler(e -> { AudioPlayer.play(AudioPlayer.BUTTON_CLICK); onCancel(); });
         if (preloadedOptions != null) {
-            view.showGameSpecificOptions(preloadedOptions);
+            showOptionsAfterLoadingTranslations(preloadedOptions);
         } else if (room.getGameId() != null) {
             roomService.getGameOptions(room.getGameId(), new AsyncCallback<ArrayList<GameOption>>() {
                 @Override public void onFailure(Throwable t) {}
                 @Override public void onSuccess(ArrayList<GameOption> options) {
-                    view.showGameSpecificOptions(options);
+                    showOptionsAfterLoadingTranslations(options);
                 }
             });
         }
+    }
+
+    private void showOptionsAfterLoadingTranslations(ArrayList<GameOption> options) {
+        GameTranslations.load(room.getGameBaseUrl(), Cookie.getLanguage(), () ->
+            view.showGameSpecificOptions(options)
+        );
     }
 
     @Override

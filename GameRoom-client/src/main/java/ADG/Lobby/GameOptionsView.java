@@ -1,5 +1,6 @@
 package ADG.Lobby;
 
+import ADG.Utils.GameTranslations;
 import ADG.i18n.I18n;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -94,21 +95,22 @@ public class GameOptionsView extends Composite {
             row.addStyleName("game-options-field-inline");
             Widget inputWidget;
             if ("BOOLEAN".equals(option.getType())) {
-                CheckBox cb = new CheckBox(option.getLabel());
+                CheckBox cb = new CheckBox(GameTranslations.translate(option.getLabelKey()));
                 cb.addStyleName("game-options-checkbox");
                 cb.setValue("true".equalsIgnoreCase(option.getDefaultValue()));
                 inputWidget = cb;
             } else if (option.getChoices() != null && !option.getChoices().isEmpty()) {
-                Label lbl = new Label(option.getLabel());
+                Label lbl = new Label(GameTranslations.translate(option.getLabelKey()));
                 lbl.addStyleName("game-options-label");
                 ListBox lb = new ListBox();
                 lb.addStyleName("game-options-select");
                 for (String choice : option.getChoices()) {
-                    lb.addItem(choice);
+                    String translatedChoice = GameTranslations.translate("gameOption.choice." + choice);
+                    lb.addItem(translatedChoice, choice);
                 }
                 if (option.getDefaultValue() != null) {
                     for (int i = 0; i < lb.getItemCount(); i++) {
-                        if (lb.getItemText(i).equals(option.getDefaultValue())) {
+                        if (lb.getValue(i).equals(option.getDefaultValue())) {
                             lb.setSelectedIndex(i);
                             break;
                         }
@@ -117,7 +119,7 @@ public class GameOptionsView extends Composite {
                 row.add(lbl);
                 inputWidget = lb;
             } else {
-                Label lbl = new Label(option.getLabel());
+                Label lbl = new Label(GameTranslations.translate(option.getLabelKey()));
                 lbl.addStyleName("game-options-label");
                 TextBox tb = new TextBox();
                 tb.addStyleName("game-options-number-input");
@@ -126,8 +128,8 @@ public class GameOptionsView extends Composite {
                 inputWidget = tb;
             }
             row.add(inputWidget);
-            if (option.getDescription() != null && !option.getDescription().isEmpty()) {
-                Label desc = new Label(option.getDescription());
+            if (option.getDescriptionKey() != null && !option.getDescriptionKey().isEmpty()) {
+                Label desc = new Label(GameTranslations.translate(option.getDescriptionKey()));
                 desc.addStyleName("game-options-description");
                 row.add(desc);
             }
@@ -147,7 +149,8 @@ public class GameOptionsView extends Composite {
             if (w instanceof CheckBox) {
                 value = String.valueOf(((CheckBox) w).getValue());
             } else if (w instanceof ListBox) {
-                value = ((ListBox) w).getSelectedItemText();
+                ListBox lb = (ListBox) w;
+                value = lb.getValue(lb.getSelectedIndex());
             } else {
                 value = ((TextBox) w).getText().trim();
             }
