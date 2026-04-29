@@ -334,6 +334,32 @@ public class RoomServiceImpl extends RemoteServiceServlet implements RoomService
         });
     }
 
+    @Scheduled(fixedDelay = 30_000)
+    public synchronized void verifyGameSessionsExist() {
+        ArrayList<Room> playingRooms = new ArrayList<>();
+        for (Room room : roomStore.rooms) {
+            if (room.getStatus() == GameStatus.PLAYING && room.getGameSessionId() != null) {
+                playingRooms.add(room);
+            }
+        }
+
+        for (Room room : playingRooms) {
+            if ("Test Room".equals(room.getName())) {
+                continue;
+            }
+
+            try {
+                String gameUrl = room.getGameBaseUrl() + "/games/" + room.getGameSessionId();
+                logger.debug("Verifying game session exists at: {}", gameUrl);
+                restTemplate.getForObject(gameUrl, Map.class);
+                logger.debug("Game session verified: {}", room.getId());
+            } catch (RestClientException e) {
+                logger.warn("Game session no longer exists for room {}: {}", room.getId(), e.getMessage());
+                roomStore.rooms.remove(room);
+            }
+        }
+    }
+
     private Map<String, Object> parseGameOptions(HashMap<String, String> raw) {
         Map<String, Object> parsed = new HashMap<>();
         for (Map.Entry<String, String> entry : raw.entrySet()) {
