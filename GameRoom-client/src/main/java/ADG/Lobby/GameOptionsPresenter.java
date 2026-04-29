@@ -54,17 +54,23 @@ public class GameOptionsPresenter implements Presenter {
 
     private void showOptionsAfterLoadingTranslations(ArrayList<GameOption> options) {
         String baseUrl = room.getGameBaseUrl();
+
+        // If baseUrl is a localhost address (development), replace with current domain (deployment)
+        if (baseUrl != null && baseUrl.contains("localhost")) {
+            baseUrl = null;
+        }
+
         if (baseUrl == null || baseUrl.isEmpty()) {
             // Fallback: try to construct from window location
-            // Assumes Qwixx is at /qwixx on the same domain
             String origin = com.google.gwt.core.client.GWT.getModuleBaseURL();
             if (origin.contains("/qwixx/")) {
                 baseUrl = origin.substring(0, origin.lastIndexOf("/qwixx/")) + "/qwixx";
             } else {
-                // Last resort: just load without translations
-                GWT.log("Warning: Could not determine game base URL for translations");
-                view.showGameSpecificOptions(options);
-                return;
+                // Secondary fallback: use /qwixx on the same domain (for different gameroom deployments)
+                String protocol = Window.Location.getProtocol();
+                String host = Window.Location.getHost();
+                baseUrl = protocol + "//" + host + "/qwixx";
+                GWT.log("Using secondary fallback baseUrl: " + baseUrl);
             }
         }
         GameTranslations.load(baseUrl, Cookie.getLanguage(), () ->

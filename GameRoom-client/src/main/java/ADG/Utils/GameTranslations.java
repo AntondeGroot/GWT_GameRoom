@@ -17,8 +17,14 @@ public class GameTranslations {
                 public void onResponseReceived(Request req, Response res) {
                     if (res.getStatusCode() == 200) {
                         try {
+                            String text = res.getText();
+                            if (text == null || text.isEmpty()) {
+                                GWT.log("Warning: Translation response body is empty");
+                                onComplete.run();
+                                return;
+                            }
                             translations.clear();
-                            flatten("", JSONParser.parseStrict(res.getText()).isObject());
+                            flatten("", JSONParser.parseStrict(text).isObject());
                             GWT.log("Loaded " + translations.size() + " translation keys");
                         } catch (Exception e) {
                             GWT.log("Error parsing translation JSON: " + e.getMessage());
