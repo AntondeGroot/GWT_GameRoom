@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class GwtRpcPolicyController {
 
     @GetMapping("/app/{filename:.+\\.gwt\\.rpc}")
-    public ResponseEntity<String> serveGwtRpcPolicy(@PathVariable String filename) {
+    public ResponseEntity<String> serveGwtRpcPolicy(@PathVariable("filename") String filename) {
         try {
             ClassPathResource resource = new ClassPathResource("public/app/" + filename);
             if (resource.exists()) {
