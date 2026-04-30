@@ -112,6 +112,37 @@ public class App implements EntryPoint {
 					presenterManager.switchToGameRoom(room);
 				}
 			});
+		} else if (token.startsWith("settings=")) {
+			// User was on Settings screen when language changed
+			// Preserve that state by returning to Settings
+			String roomId = token.substring("settings=".length());
+			roomService.getRoomById(roomId, new AsyncCallback<Room>() {
+				public void onFailure(Throwable caught) {
+					GWT.log("failed to retrieve room for settings");
+					presenterManager.switchToLobby();
+				}
+				public void onSuccess(Room room) {
+					if (room == null) { presenterManager.switchToLobby(); return; }
+					presenterManager.switchToGameOptions(room, presenterManager.getPreloadedGameOptions());
+				}
+			});
+		} else if (token.startsWith("character=")) {
+			// User was on CharacterSelection screen when language changed
+			// Preserve that state by returning to CharacterSelection
+			String roomId = token.substring("character=".length());
+			roomService.getRoomById(roomId, new AsyncCallback<Room>() {
+				public void onFailure(Throwable caught) {
+					GWT.log("failed to retrieve room for character selection");
+					presenterManager.switchToLobby();
+				}
+				public void onSuccess(Room room) {
+					if (room != null && room.getPlayerIds().contains(Cookie.getPlayerId())) {
+						presenterManager.switchToCharacterSelection(room);
+					} else {
+						presenterManager.switchToLobby();
+					}
+				}
+			});
 		} else if (token.startsWith("joining=")) {
 			String roomId = token.substring("joining=".length());
 			roomService.getRoomById(roomId, new AsyncCallback<Room>() {

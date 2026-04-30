@@ -3,6 +3,7 @@ package ADG;
 import ADG.Lobby.*;
 import java.util.ArrayList;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -21,6 +22,9 @@ public class PresenterManager {
     // Services
     private final RoomServiceAsync roomServiceAsync = GWT.create(RoomService.class);
     private final MessageServiceAsync messageServiceAsync = GWT.create(MessageService.class);
+    // State preservation for language changes
+    private Room currentRoom;
+    private ArrayList<GameOption> preloadedGameOptions;
 
     public void switchToGameRoom(Room room) {
         roomPresenter = new RoomPresenter(roomView, room, this, roomServiceAsync, messageServiceAsync);
@@ -35,13 +39,27 @@ public class PresenterManager {
     }
 
     public void switchToGameOptions(Room room, ArrayList<GameOption> preloadedOptions) {
+        currentRoom = room;
+        preloadedGameOptions = preloadedOptions;
+        History.newItem("settings=" + room.getId());
         gameOptionsPresenter = new GameOptionsPresenter(gameOptionsView, room, this, roomServiceAsync, preloadedOptions);
         switchPresenter(gameOptionsPresenter, gameOptionsView);
     }
 
     public void switchToCharacterSelection(Room room){
+        currentRoom = room;
+        History.newItem("character=" + room.getId());
         characterSelectionPresenter = new CharacterSelectionPresenter(characterSelectionView, room, this, roomServiceAsync);
         switchPresenter(characterSelectionPresenter, characterSelectionView);
+    }
+
+    // Getters for restoring state after language change
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
+
+    public ArrayList<GameOption> getPreloadedGameOptions() {
+        return preloadedGameOptions;
     }
 
     private void switchPresenter(Presenter newPresenter, Widget newView) {
